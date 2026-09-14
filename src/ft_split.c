@@ -1,3 +1,5 @@
+#include "codexion.h"
+
 static char	*get_word(const char *s, int start, int end)
 {
 	char	*word;

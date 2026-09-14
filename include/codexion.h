@@ -2,7 +2,9 @@
 # define CODEXION_H
 # include <pthread.h>
 # include <stdio.h>
+# include <stdlib.h>
 # include <limits.h>
+# include <string.h>
 
 typedef struct s_coder
 {
@@ -24,5 +26,23 @@ typedef struct s_coders
 	char    *scheduler;
 	t_coder *coders;
 } t_coders;
+
+
+
+// main
+void init_coders(long *numeric, char *scheduler, t_coders *coders);
+
+// parsing
+long    *parse_and_validate(int argc, char **argv, t_coders *coders);
+void	init_coders(long *numeric, char *scheduler, t_coders *coders);
+
+
+//helpers
+char	**ft_split(char const *s, char c);
+void	split_free(char **s);
+long	ft_atol(const char *str);
+char    *str_tolower(char *s);
+int		len(char **s);
+
 
 #endif
