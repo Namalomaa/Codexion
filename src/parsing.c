@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: namaloma <namaloma@learner.42.tech>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/14 19:25:43 by namaloma          #+#    #+#             */
+/*   Updated: 2026/09/14 19:26:00 by namaloma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static long    *validate_split(char **parts)
@@ -108,7 +120,7 @@ long    *parse_and_validate(int argc, char **argv, t_coders *coders)
 	scheduler = str_tolower(scheduler);
 	numeric_part[7] = NULL;
 	valid_nums = validate_split(numeric_part);
-	if (!valid_nums)
+	if (!valid_nums)l
 		return(free(all_str), split_free(numeric_part), NULL);
 	if (strcmp(scheduler, "edf") != 0
 		&& strcmp(scheduler, "fifo") != 0)
