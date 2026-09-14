@@ -27,6 +27,7 @@ void init_coders(long *numeric, char *scheduler, t_coders *coders)
 int	main(int argc, char **argv)
 {
 	t_coders	coders;
+
     if (!parse_and_validate(argc, argv, &coders))
 		return (1);
 	

@@ -17,7 +17,10 @@ static long    *validate_split(char **parts)
 	{
 		j = 0;
 		if (parts[i][j] == '-' )
+		{
+			fprintf(stderr, "Invalid values should be positive.\n");	
 			return (free(nums), NULL); // reject negative numbers
+		}
 		if (parts[i][j] == '+')
 			j++;
 		if (!parts[i][j])
@@ -30,8 +33,11 @@ static long    *validate_split(char **parts)
 		}
 		n = ft_atol(parts[i]);
 		nums [i] = n;
-		if (n < 0 || n > INT_MAX)
+		if (n <= 0 || n > INT_MAX)
+		{
+			fprintf(stderr, "Invalid values should be greater than 0.\n");
 			return (free(nums), NULL);
+		}
 		i++;
 	}
 	return (nums);
