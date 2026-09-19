@@ -41,6 +41,7 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders);
 char	**ft_split(char const *s, char c);
 void	split_free(char **s);
 long	ft_atol(const char *str);
+char	*ft_strdup(const char *s);
 int		parse_positive_int(const char *s, long *out);
 char    *str_tolower(char *s);
 int		len(char **s);

@@ -124,12 +124,12 @@ int parse_and_validate(int argc, char **argv, t_coders *coders)
 	numeric_part[7] = NULL;
 	valid_nums = validate_split(numeric_part);
 	if (!valid_nums)
-		return(free(all_str), free(scheduler), split_free(numeric_part), 0);
+		return(free(all_str), split_free(numeric_part), 0);
 	coders->coders = malloc(sizeof(t_coder) * valid_nums[0]);
 	if (!coders->coders)
 	{
 		fprintf(stderr, "Error: malloc failed\n");
-		return (free(all_str),free(valid_nums), free(scheduler), split_free(numeric_part), 0);
+		return (free(all_str),free(valid_nums), split_free(numeric_part), 0);
 	}	
 	init_coders(valid_nums, scheduler, coders);
 	split_free(numeric_part);

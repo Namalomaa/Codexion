@@ -32,7 +32,7 @@ void init_coders(long *numeric, char *scheduler, t_coders *coders)
     coders->time_to_refactor = numeric[4];
     coders->number_of_compiles_required = numeric[5];
     coders->dongle_cooldown = numeric[6];
-    coders->scheduler = scheduler;
+    coders->scheduler = ft_strdup(scheduler);
 
 }
 
@@ -43,7 +43,13 @@ int	main(int argc, char **argv)
     memset(&coders, 0, sizeof(t_coders));
     if (!parse_and_validate(argc, argv, &coders))
 		return (1);
+	printf("# of coders: %d\n", coders.number_of_coders);
+	printf("Time to burnout: %d\n", coders.time_to_burnout);
+	printf("Time to compile: %d\n", coders.time_to_compile);
+	printf("number_of_compiles_required: %d\n", coders.number_of_compiles_required);
+	printf("dongle_cooldown: %d\n", coders.dongle_cooldown);
+	printf("scheduler: %s\n", coders.scheduler);
 	free(coders.coders);
-    free(coders.scheduler);
-    return (0);
+	free(coders.scheduler);
+	return (0);
 }

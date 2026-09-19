@@ -53,6 +53,30 @@ char    *str_tolower(char *s)
 	return (s);
 }
 
+char	*ft_strdup(const char *s)
+{
+	char	*ds;
+	size_t	i;
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+	{
+		len ++;
+	}
+	ds = (char *)malloc(sizeof (char) * (len + 1));
+	if (!ds)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		ds[i] = s[i];
+		i++;
+	}
+	ds [i] = '\0';
+	return (ds);
+}
+
 int parse_positive_int(const char *s, long *out)
 {
     long    n;
