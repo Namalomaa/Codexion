@@ -42,21 +42,7 @@ int	main(int argc, char **argv)
 
     memset(&coders, 0, sizeof(t_coders));
     if (!parse_and_validate(argc, argv, &coders))
-		return (1);
-	printf("# of coders: %d\n", coders.number_of_coders);
-	printf("Time to burnout: %d\n", coders.time_to_burnout);
-	printf("Time to compile: %d\n", coders.time_to_compile);
-	printf("number_of_compiles_required: %d\n", coders.number_of_compiles_required);
-	printf("dongle_cooldown: %d\n", coders.dongle_cooldown);
-	printf("scheduler: %s\n", coders.scheduler);
-	int i = 0;
-	while (i < coders.number_of_coders)
-		{
-			printf("coder id: %d\n", coders.coders[i].id);
-			printf("coder compile count: %d\n", coders.coders[i].compile_count);
-			printf("coder last compile time: %ld\n", coders.coders[i].last_compile_start);
-			i++;
-		}
+		return (1);`
 	free(coders.coders);
 	free(coders.scheduler);
 	return (0);
