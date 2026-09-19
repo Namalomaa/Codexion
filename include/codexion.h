@@ -33,7 +33,7 @@ typedef struct s_coders
 void init_coders(long *numeric, char *scheduler, t_coders *coders);
 
 // parsing
-long    *parse_and_validate(int argc, char **argv, t_coders *coders);
+int		parse_and_validate(int argc, char **argv, t_coders *coders);
 void	init_coders(long *numeric, char *scheduler, t_coders *coders);
 
 
@@ -41,6 +41,7 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders);
 char	**ft_split(char const *s, char c);
 void	split_free(char **s);
 long	ft_atol(const char *str);
+int		parse_positive_int(const char *s, long *out);
 char    *str_tolower(char *s);
 int		len(char **s);
 

@@ -40,7 +40,10 @@ int	main(int argc, char **argv)
 {
 	t_coders	coders;
 
+    memset(&coders, 0, sizeof(t_coders));
     if (!parse_and_validate(argc, argv, &coders))
 		return (1);
-	
+	free(coders.coders);
+    free(coders.scheduler);
+    return (0);
 }

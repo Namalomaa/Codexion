@@ -53,27 +53,32 @@ char    *str_tolower(char *s)
 	return (s);
 }
 
-long	ft_atol(const char *str)
+int parse_positive_int(const char *s, long *out)
 {
-	long	result;
-	int		sign;
-	size_t	i;
+    long    n;
+    int     i;
+    int     digit;
 
-	result = 0;
-	sign = 1;
-	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		result = result * 10 + (str[i] - '0');
-		i++;
-	}
-    return (result * sign);
+    if (!s || !s[0])
+        return (0);
+    i = 0;
+    if (s[i] == '+')
+        i ++;
+    if (!s[i])
+        return (0);
+    n = 0;
+    while (s[i])
+    {
+        if (s[i] < '0' || s[i] > '9')
+            return (0);
+        digit = s[i] - '0';
+        if (n > (INT_MAX - digit) / 10)
+            return (0);
+        n = n * 10 + digit;
+        i ++;
+    }
+    if (n <= 0)
+        return (0);
+    *out = n;
+    return (1);
 }
