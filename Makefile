@@ -5,7 +5,8 @@ CFLAGS	=	-Wall -Wextra -Werror -I include
 SRC	=	./src/main.c \
 		./src/parsing.c \
 		./src/ft_split.c \
-		./src/helpers.c
+		./src/helpers.c \
+		./src/routine.c
 
 OBJ = $(SRC:.c=.o)
 all = $(NAME)

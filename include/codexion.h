@@ -8,11 +8,13 @@
 
 typedef struct s_coder
 {
-	int         id;
-	int         compile_count;
-	long        last_compile_start;
-	pthread_t   thread;
-} t_coder;
+	int				id;
+	int				compile_count;
+	long			last_compile_start;
+	pthread_t		thread;
+	pthread_mutex_t	*left_dongle;
+	pthread_mutex_t	*right_dongle;
+}	t_coder;
 
 typedef struct s_coders
 {
@@ -21,16 +23,18 @@ typedef struct s_coders
 	int		time_to_compile;
 	int		time_to_debug;
 	int		time_to_refactor;
-	int     number_of_compiles_required;
-	int     dongle_cooldown;
-	char    *scheduler;
+	int		number_of_compiles_required;
+	int		dongle_cooldown;
+	char	*scheduler;
+	pthread_mutex_t	*dongles;
 	t_coder *coders;
-} t_coders;
+}	t_coders;
 
 
 
-// main
-void init_coders(long *numeric, char *scheduler, t_coders *coders);
+// initilizing
+void	init_coders(long *numeric, char *scheduler, t_coders *coders);
+void	init_dongles(t_coders *coders);
 
 // parsing
 int		parse_and_validate(int argc, char **argv, t_coders *coders);
@@ -47,4 +51,5 @@ char    *str_tolower(char *s);
 int		len(char **s);
 
 
+void    *coder_routine(void *coder);
 #endif
