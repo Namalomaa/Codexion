@@ -49,6 +49,14 @@ int	main(int argc, char **argv)
 	printf("number_of_compiles_required: %d\n", coders.number_of_compiles_required);
 	printf("dongle_cooldown: %d\n", coders.dongle_cooldown);
 	printf("scheduler: %s\n", coders.scheduler);
+	int i = 0;
+	while (i < coders.number_of_coders)
+		{
+			printf("coder id: %d\n", coders.coders[i].id);
+			printf("coder compile count: %d\n", coders.coders[i].compile_count);
+			printf("coder last compile time: %ld\n", coders.coders[i].last_compile_start);
+			i++;
+		}
 	free(coders.coders);
 	free(coders.scheduler);
 	return (0);
