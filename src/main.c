@@ -17,13 +17,28 @@ void	init_dongles(t_coders *coders)
 	int	i;
 
 	coders->dongles = malloc(sizeof(pthread_mutex_t) * coders->number_of_coders);
-	if (!coders->coders)
+	if (!coders->dongles)
 		return;
 	i = 0;
 	while(i < coders->number_of_coders)
 	{
+		pthread_mutex_init(&coders->dongles[i], NULL);
 		coders->coders[i].right_dongle = &coders->dongles[i];
 		coders->coders[i].left_dongle = &coders->dongles[(i + 1) % coders->number_of_coders];
+		i ++;
+	}
+}
+
+void	create_threads(t_coders *coders)
+{
+	int	i;
+
+	i = 0;
+	while (i < coders->number_of_coders)
+	{
+		pthread_create(&coders->coders[i].thread, NULL,
+		coder_routine, &coders->coders[i]);
+		i ++;
 	}
 }
 
@@ -36,16 +51,14 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders)
 	coders->coders = malloc(sizeof(t_coder) * coders->number_of_coders);
 	if (!coders->coders)
 		return;
+	if (! init_dongles(coders))
+		return;
 	while (++ i < coders->number_of_coders)
 	{
 		coders->coders[i].id = i + 1;
 		coders->coders[i].compile_count = 0;
 		coders->coders[i].last_compile_start = 0;
-        pthread_create(&coders->coders[i].thread, NULL,
-			coder_routine, &coders->coders[i]);
-		pthread_mutex_init(coders->dongles, NULL);
 	}
-	init_dongles(coders);
     coders->time_to_burnout = numeric[1];
     coders->time_to_compile = numeric[2];
     coders->time_to_debug = numeric[3];
@@ -53,16 +66,25 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders)
     coders->number_of_compiles_required = numeric[5];
     coders->dongle_cooldown = numeric[6];
     coders->scheduler = ft_strdup(scheduler);
+	create_threads(coders);
 }
 
 int	main(int argc, char **argv)
 {
+	int			i;
 	t_coders	coders;
 
     memset(&coders, 0, sizeof(t_coders));
     if (!parse_and_validate(argc, argv, &coders))
 		return (1);
+	i = -1;
+	while (++ i < coders->number_of_coders)
+	{
+		pthread_join(coders->coders[i].thread, NULL);
+		pthread_mutex_destroy(&coders->dongles[i]);
+	}
 	free(coders.coders);
 	free(coders.scheduler);
+	free(coders.dongles);
 	return (0);
 }
