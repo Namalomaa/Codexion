@@ -6,7 +6,7 @@ SRC	=	./src/main.c \
 		./src/parsing.c \
 		./src/ft_split.c \
 		./src/helpers.c \
-		./src/routine.c
+		./src/protocol.c
 
 OBJ = $(SRC:.c=.o)
 all = $(NAME)

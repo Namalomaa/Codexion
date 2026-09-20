@@ -6,7 +6,7 @@
 /*   By: namaloma <namaloma@learner.42.tech>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/14 19:25:10 by namaloma          #+#    #+#             */
-/*   Updated: 2026/09/19 15:11:14 by namaloma         ###   ########.fr       */
+/*   Updated: 2026/09/20 14:52:57 by namaloma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	create_threads(t_coders *coders)
 	while (i < coders->number_of_coders)
 	{
 		pthread_create(&coders->coders[i].thread, NULL,
-		coder_routine, &coders->coders[i]);
+		coder_protocol, &coders->coders[i]);
 		i ++;
 	}
 }

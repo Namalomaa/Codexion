@@ -5,6 +5,7 @@
 # include <stdlib.h>
 # include <limits.h>
 # include <string.h>
+# include <time.h>
 
 typedef struct s_coder
 {
@@ -13,7 +14,8 @@ typedef struct s_coder
 	long			last_compile_start;
 	pthread_t		thread;
 	pthread_mutex_t	*left_dongle;
-	pthread_mutex_t	*right_dongle;
+    pthread_mutex_t	*right_dongle;
+    t_coders    *simulation;
 }	t_coder;
 
 typedef struct s_coders
@@ -25,6 +27,7 @@ typedef struct s_coders
 	int		time_to_refactor;
 	int		number_of_compiles_required;
 	int		dongle_cooldown;
+    int     stop;
 	char	*scheduler;
 	pthread_mutex_t	*dongles;
 	t_coder *coders;
