@@ -1,12 +1,14 @@
 NAME	=	codexion
 CC	=	cc
-CFLAGS	=	-Wall -Wextra -Werror -I include
+CFLAGS	=	-Wall -Wextra -Werror -g -I include
 
 SRC	=	./src/main.c \
 		./src/parsing.c \
 		./src/ft_split.c \
 		./src/helpers.c \
-		./src/protocol.c
+		./src/protocol.c \
+		./src/monitor.c \
+		./src/protection.c
 
 OBJ = $(SRC:.c=.o)
 all = $(NAME)

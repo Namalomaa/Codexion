@@ -6,6 +6,9 @@
 # include <limits.h>
 # include <string.h>
 # include <time.h>
+# include <unistd.h>
+
+typedef struct s_coders t_coders;
 
 typedef struct s_coder
 {
@@ -15,36 +18,39 @@ typedef struct s_coder
 	pthread_t		thread;
 	pthread_mutex_t	*left_dongle;
     pthread_mutex_t	*right_dongle;
-    t_coders    *simulation;
+    t_coders    	*simulation;
 }	t_coder;
 
 typedef struct s_coders
 {
-	int		number_of_coders;
-	int		time_to_burnout;
-	int		time_to_compile;
-	int		time_to_debug;
-	int		time_to_refactor;
-	int		number_of_compiles_required;
-	int		dongle_cooldown;
-    int     stop;
-	char	*scheduler;
+	int				number_of_coders;
+	int				time_to_burnout;
+	int				time_to_compile;
+	int				time_to_debug;
+	int				time_to_refactor;
+	int				number_of_compiles_required;
+	int				dongle_cooldown;
+	long			start_time;
+    int				stop;
+	char			*scheduler;
+	pthread_t		monitor_thread;
 	pthread_mutex_t	*dongles;
-	t_coder *coders;
+	pthread_mutex_t	simulation_lock;
+	t_coder 		*coders;
 }	t_coders;
 
 
 
 // initilizing
 void	init_coders(long *numeric, char *scheduler, t_coders *coders);
-void	init_dongles(t_coders *coders);
+int		init_dongles(t_coders *coders);
 
 // parsing
 int		parse_and_validate(int argc, char **argv, t_coders *coders);
 void	init_coders(long *numeric, char *scheduler, t_coders *coders);
 
 
-//helpers
+// helpers
 char	**ft_split(char const *s, char c);
 void	split_free(char **s);
 long	ft_atol(const char *str);
@@ -54,5 +60,24 @@ char    *str_tolower(char *s);
 int		len(char **s);
 
 
-void    *coder_routine(void *coder);
+// getters and setters
+long    get_current_time();
+long    get_last_compile_start(t_coder *coder);
+int     get_compile_count(t_coder *coder);
+int     get_stop(t_coders *coders);
+void    set_stop(t_coders *coders, int value);
+void    set_last_compile_start(t_coder *coder, long value);
+void    set_compile_count(t_coder *coder, int value);
+
+
+void    *coder_protocol(void *coder);
+void    compile(t_coder *coder);
+void    debug(t_coder *coder);
+void    refactor(t_coder *coder);
+void    pickup_dongles(t_coder *coder);
+void    putdown_dongles(t_coder *coder);
+
+
+void    *coders_monitor(void *arg);
+
 #endif
