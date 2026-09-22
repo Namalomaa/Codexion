@@ -6,7 +6,7 @@
 /*   By: namaloma <namaloma@learner.42.tech>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/14 19:25:43 by namaloma          #+#    #+#             */
-/*   Updated: 2026/09/14 19:26:00 by namaloma         ###   ########.fr       */
+/*   Updated: 2026/09/22 18:07:23 by namaloma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ static long    *validate_split(char **parts)
 
 	if (!parts || !parts[0])
 		return (NULL);
-	nums = malloc(sizeof(long) * len(parts));
+	nums = malloc(sizeof(long) * 7);
 	if (!nums)
 	{
 		fprintf(stderr, "Error: malloc failed\n");
 		return (NULL);
 	}
 	i = 0;
-	while (parts[i])
+	while (i < 7)
 	{
 		if (!parse_positive_int(parts[i], &n))
 		{
@@ -121,15 +121,9 @@ int parse_and_validate(int argc, char **argv, t_coders *coders)
 		fprintf(stderr, "Error: scheduler must be 'fifo' or 'edf'\n");
 		return (free(all_str), split_free(numeric_part), 0);
 	}
-	numeric_part[7] = NULL;
 	valid_nums = validate_split(numeric_part);
 	if (!valid_nums)
 		return(free(all_str), split_free(numeric_part), 0);
-	if (!coders->coders)
-	{
-		fprintf(stderr, "Error: malloc failed\n");
-		return (free(all_str),free(valid_nums), split_free(numeric_part), 0);
-	}	
 	init_coders(valid_nums, scheduler, coders);
 	split_free(numeric_part);
 	free (all_str);

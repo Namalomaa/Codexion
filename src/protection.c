@@ -48,5 +48,6 @@ void    set_stop(t_coders *coders, int value)
 {
     pthread_mutex_lock(&coders->simulation_lock);
     coders->stop = value;
+    pthread_cond_broadcast(&coders->simulation_cond);
     pthread_mutex_unlock(&coders->simulation_lock);
 }

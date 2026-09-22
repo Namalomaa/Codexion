@@ -1,6 +1,6 @@
 NAME	=	codexion
 CC	=	cc
-CFLAGS	=	-Wall -Wextra -Werror -g -I include
+CFLAGS	=	-Wall -Wextra -Werror -pthread -g -I include
 
 SRC	=	./src/main.c \
 		./src/parsing.c \

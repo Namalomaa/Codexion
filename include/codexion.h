@@ -52,8 +52,8 @@ typedef struct s_coders
 	pthread_t		monitor_thread;
 	pthread_mutex_t	*dongles;
     long            *dongle_available_at;
-	pthread_cond_t  simulation_cond;
     pthread_mutex_t	simulation_lock;
+	pthread_cond_t  simulation_cond;
 	t_coder 		*coders;
     t_queue         queue;
 }	t_coders;
