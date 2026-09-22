@@ -21,6 +21,22 @@ typedef struct s_coder
     t_coders    	*simulation;
 }	t_coder;
 
+
+typedef struct  s_request
+{
+    t_coder *coder;
+    long    request_time;
+    long    deadline;
+
+}   t_request;
+
+typedef struct  s_queue
+{
+    t_request   *request;
+    int         size;
+    int         capacity;
+}   t_queue;
+
 typedef struct s_coders
 {
 	int				number_of_coders;
@@ -35,8 +51,11 @@ typedef struct s_coders
 	char			*scheduler;
 	pthread_t		monitor_thread;
 	pthread_mutex_t	*dongles;
-	pthread_mutex_t	simulation_lock;
+    long            *dongle_available_at;
+	pthread_cond_t  simulation_cond;
+    pthread_mutex_t	simulation_lock;
 	t_coder 		*coders;
+    t_queue         queue;
 }	t_coders;
 
 

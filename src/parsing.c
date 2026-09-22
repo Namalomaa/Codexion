@@ -125,7 +125,6 @@ int parse_and_validate(int argc, char **argv, t_coders *coders)
 	valid_nums = validate_split(numeric_part);
 	if (!valid_nums)
 		return(free(all_str), split_free(numeric_part), 0);
-	coders->coders = malloc(sizeof(t_coder) * valid_nums[0]);
 	if (!coders->coders)
 	{
 		fprintf(stderr, "Error: malloc failed\n");
