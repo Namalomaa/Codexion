@@ -29,6 +29,7 @@ int init_dongles(t_coders *coders)
 		i ++;
 	}
 	pthread_cond_init(&coders->simulation_cond, NULL);
+	pthread_mutex_init(&coders->simulation_lock, NULL);
     return (1);
 }
 
@@ -90,6 +91,7 @@ int	main(int argc, char **argv)
 	}
 	pthread_join(coders.monitor_thread, NULL);
 	pthread_cond_destroy(&coders.simulation_cond);
+	pthread_mutex_destroy(&coders.simulation_lock);
 	free(coders.coders);
 	free(coders.scheduler);
 	free(coders.dongles);

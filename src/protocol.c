@@ -15,10 +15,13 @@ void    compile(t_coder *coder)
     start = get_current_time();
     set_last_compile_start(coder, start);
     elapsed_time = start - coder->simulation->start_time;
-    printf("%ld %i is compiling\n", elapsed_time, coder->id);
-    while(get_current_time() - start < coder->simulation->time_to_compile)
+    if (!get_stop(coder->simulation))
+        printf("%ld %i is compiling\n", elapsed_time, coder->id);
+    while(!get_stop(coder->simulation) &&
+           get_current_time() - start < coder->simulation->time_to_compile)
         usleep(1000);
-    set_compile_count(coder, get_compile_count(coder) + 1);
+    if (!get_stop(coder->simulation))
+        set_compile_count(coder, get_compile_count(coder) + 1);
 }
 
 void    debug(t_coder *coder)
@@ -28,8 +31,10 @@ void    debug(t_coder *coder)
 
     start = get_current_time();
     elapsed_time = start - coder->simulation->start_time;
-    printf("%ld %i is debugging\n", elapsed_time, coder->id);
-    while(get_current_time() - start < coder->simulation->time_to_debug)
+    if (!get_stop(coder->simulation))
+        printf("%ld %i is debugging\n", elapsed_time, coder->id);        
+    while(!get_stop(coder->simulation) &&
+           get_current_time() - start < coder->simulation->time_to_debug)
         usleep(1000);
 }
 
@@ -40,8 +45,10 @@ void    refactor(t_coder *coder)
 
     start = get_current_time();
     elapsed_time = start - coder->simulation->start_time;
-    printf("%ld %i is refactoring\n", elapsed_time, coder->id);
-    while(get_current_time() - start < coder->simulation->time_to_refactor)
+    if (!get_stop(coder->simulation))
+        printf("%ld %i is refactoring\n", elapsed_time, coder->id);
+    while(!get_stop(coder->simulation) &&
+           get_current_time() - start < coder->simulation->time_to_refactor)
         usleep(1000);
 }
 
@@ -50,24 +57,36 @@ void    pickup_dongles(t_coder *coder)
     if (coder->id == coder->simulation->number_of_coders)
     {
         pthread_mutex_lock(coder->right_dongle);
-        printf("%ld %i has taken a dongle\n",
-         get_current_time() - coder->simulation->start_time,
-         coder->id);
+        if (!get_stop(coder->simulation))
+        {
+            printf("%ld %i has taken a dongle\n",
+            get_current_time() - coder->simulation->start_time,
+            coder->id);
+        }
         pthread_mutex_lock(coder->left_dongle);
-        printf("%ld %i has taken a dongle\n",
-         get_current_time() - coder->simulation->start_time,
-         coder->id);
+        if (!get_stop(coder->simulation))
+        {
+            printf("%ld %i has taken a dongle\n",
+            get_current_time() - coder->simulation->start_time,
+            coder->id);
+        }
     }
     else
     {
         pthread_mutex_lock(coder->left_dongle);
-        printf("%ld %i has taken a dongle\n",
-          get_current_time() - coder->simulation->start_time,
-          coder->id);
+        if (!get_stop(coder->simulation))
+        {
+            printf("%ld %i has taken a dongle\n",
+            get_current_time() - coder->simulation->start_time,
+            coder->id);
+        }
         pthread_mutex_lock(coder->right_dongle);
-        printf("%ld %i has taken a dongle\n",
-          get_current_time() - coder->simulation->start_time,
-          coder->id);
+        if (!get_stop(coder->simulation))
+        {
+            printf("%ld %i has taken a dongle\n",
+            get_current_time() - coder->simulation->start_time,
+            coder->id);
+        }
     }
 }
 
@@ -87,10 +106,17 @@ void    *coder_protocol(void *arg)
     {
         pickup_dongles(coder);
         if (get_stop(coder->simulation))
+        {
+            putdown_dongles(coder);
             break;
+        }
         compile(coder);
         putdown_dongles(coder);
+        if (get_stop(coder->simulation))
+            break;
         debug(coder);
+        if (get_stop(coder->simulation))
+            break;
         refactor(coder);
     }
     return (NULL);
