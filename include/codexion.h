@@ -95,8 +95,9 @@ void    debug(t_coder *coder);
 void    refactor(t_coder *coder);
 void    pickup_dongles(t_coder *coder);
 void    putdown_dongles(t_coder *coder);
-
+int 	print_state(t_coders *coders, int id, char *msg);
 
 void    *coders_monitor(void *arg);
+int	 	print_burnout(t_coders *coders, int id);
 
 #endif

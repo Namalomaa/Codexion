@@ -1,36 +1,63 @@
-# include "codexion.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                       :::      ::::::::    */
+/*   monitor.c                                         :+:      :+:    :+:    */
+/*                                                   +:+ +:+         +:+      */
+/*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
+/*                                               +#+#+#+#+#+   +#+            */
+/*   Created: 2026/09/23 22:50:51 by namaloma         #+#    #+#              */
+/*   Updated: 2026/09/23 22:55:44 by namaloma        ###   ########.fr        */
+/*                                                                            */
+/* ************************************************************************** */
 
-void    *coders_monitor(void *arg)
+#include "codexion.h"
+
+int	print_burnout(t_coders *coders, int id)
 {
-    t_coders *coders;
-    int       i;
-    int       all_compiled;
+	int	done;
 
-    coders = arg;
-    while (!get_stop(coders))
-    {
-        all_compiled = 0;
-        i = 0;
-        while (i < coders->number_of_coders)
-        {
-            if (get_current_time() - get_last_compile_start(&coders->coders[i]) >= coders->time_to_burnout)
-            {
-                printf("%ld %i has burned out\n",
-                    get_current_time() - coders->start_time,
-                    coders->coders[i].id);
-                set_stop(coders, 1);
-                break ;
-            }
-            if (get_compile_count(&coders->coders[i]) >= coders->number_of_compiles_required)
-                all_compiled ++;
-            i ++;
-        }
-        if (all_compiled >= coders->number_of_coders)
-        {
-            set_stop(coders, 1);
-            break ;
-        }
-        usleep(1000);
-    }
-    return (NULL);
+	pthread_mutex_lock(&coders->simulation_lock);
+	done = 0;
+	if (!coders->stop)
+	{
+		printf("%ld %i burned out\n",
+			get_current_time() - coders->start_time, id);
+		coders->stop = 1;
+		pthread_cond_broadcast(&coders->simulation_cond);
+		done = 1;
+	}
+	pthread_mutex_unlock(&coders->simulation_lock);
+	return (done);
+}
+
+void	*coders_monitor(void *arg)
+{
+	t_coders	*coders;
+	int			i;
+	int			all_compiled;
+
+	coders = arg;
+	while (!get_stop(coders))
+	{
+		all_compiled = 0;
+		i = 0;
+		while (i < coders->number_of_coders)
+		{
+			if (get_current_time() - get_last_compile_start(&coders->coders[i]) >= coders->time_to_burnout)
+			{
+				print_burnout(coders, coders->coders[i].id);
+				break ;
+			}
+			if (get_compile_count(&coders->coders[i]) >= coders->number_of_compiles_required)
+				all_compiled++;
+			i++;
+		}
+		if (all_compiled == coders->number_of_coders)
+		{
+			set_stop(coders, 1);
+			break ;
+		}
+		usleep(1000);
+	}
+	return (NULL);
 }
