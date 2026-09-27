@@ -75,27 +75,68 @@ void	refactor(t_coder *coder)
 	}
 }
 
-void	pickup_dongles(t_coder *coder)
+int take_dongle(t_coder *coder, int idx)
 {
-	if (coder->id == coder->simulation->number_of_coders)
+    t_coders *coders;
+
+    coders = coder->simulation;
+    pthread_mutex_lock(&coders->dongles[idx]);
+
+    while (!get_stop(coders)
+        && get_current_time() < coders->dongle_cold_at[idx])
+        usleep(1000);
+
+    if (get_stop(coders))
+    {
+        pthread_mutex_unlock(&coders->dongles[idx]);
+        return (0);
+    }
+
+    print_state(coders, coder->id, "has taken a dongle");
+    return (1);
+}
+
+int	pickup_dongles(t_coder *coder)
+{
+	t_coders	*coders;
+	int			left_idx;
+	int			right_idx;
+
+	coders = coder->simulation;
+	left_idx = coder->id % coders->number_of_coders;
+	right_idx = coder->id - 1;
+	if (coder->id == coders->number_of_coders)
 	{
-		pthread_mutex_lock(coder->right_dongle);
-		print_state(coder->simulation, coder->id, "has taken a dongle");
-		pthread_mutex_lock(coder->left_dongle);
-		print_state(coder->simulation, coder->id, "has taken a dongle");
+		if (!take_dongle(coder, right_idx))
+			return (0);
+		if (!take_dongle(coder, left_idx))
+			return (pthread_mutex_unlock(coder->right_dongle), 0);
 	}
 	else
 	{
-		pthread_mutex_lock(coder->left_dongle);
-		print_state(coder->simulation, coder->id, "has taken a dongle");
-		pthread_mutex_lock(coder->right_dongle);
-		print_state(coder->simulation, coder->id, "has taken a dongle");
+		if (!take_dongle(coder, left_idx))
+			return (0);
+		if (!take_dongle(coder, right_idx))
+			return (pthread_mutex_unlock(coder->left_dongle), 0);
 	}
+	return (1);
 }
 
 void	putdown_dongles(t_coder *coder)
 {
+	t_coders	*coders;
+	long		current_time;
+	int			right_id;
+	int			left_id;
+
+	coders = coder->simulation;
+	right_id = coder->id - 1;
+	left_id = coder->id % coders->number_of_coders;
+	current_time = get_current_time();
+	coders->dongle_cold_at[left_id] = current_time + coders->dongle_cooldown;
 	pthread_mutex_unlock(coder->left_dongle);
+	current_time = get_current_time();
+	coders->dongle_cold_at[right_id] = current_time + coders->dongle_cooldown;
 	pthread_mutex_unlock(coder->right_dongle);
 }
 
@@ -106,12 +147,8 @@ void	*coder_protocol(void *arg)
 	coder = arg;
 	while (!get_stop(coder->simulation))
 	{
-		pickup_dongles(coder);
-		if (get_stop(coder->simulation))
-		{
-			putdown_dongles(coder);
+		if (!pickup_dongles(coder))
 			break ;
-		}
 		compile(coder);
 		putdown_dongles(coder);
 		if (get_stop(coder->simulation))

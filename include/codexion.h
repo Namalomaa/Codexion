@@ -21,6 +21,12 @@ typedef struct s_coder
     t_coders    	*simulation;
 }	t_coder;
 
+typedef struct  s_dongle
+{
+    pthread_mutex_t dongle;
+    long            up_after;
+}
+
 
 typedef struct  s_request
 {
@@ -51,7 +57,7 @@ typedef struct s_coders
 	char			*scheduler;
 	pthread_t		monitor_thread;
 	pthread_mutex_t	*dongles;
-    long            *dongle_available_at;
+    long            *dongle_cold_at;
     pthread_mutex_t	simulation_lock;
 	pthread_cond_t  simulation_cond;
 	t_coder 		*coders;
