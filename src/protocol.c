@@ -140,11 +140,29 @@ void	putdown_dongles(t_coder *coder)
 	pthread_mutex_unlock(coder->right_dongle);
 }
 
+void	*one_coder(t_coder *coder)
+{
+	t_coders	*coders;
+
+	coders = coder->simulation;
+	if (!take_dongle(coder, 0))
+		return (NULL);
+	pthread_mutex_lock(&coders->simulation_lock);
+	while (!coders->stop)
+		pthread_cond_wait(&coders->simulation_cond,
+			&coders->simulation_lock);
+	pthread_mutex_unlock(&coders->simulation_lock);
+	pthread_mutex_unlock(coder->right_dongle);
+	return (NULL);
+}
+
 void	*coder_protocol(void *arg)
 {
 	t_coder	*coder;
 
 	coder = arg;
+	if (coder->simulation->number_of_coders == 1)
+		return (one_coder(coder));
 	while (!get_stop(coder->simulation))
 	{
 		if (!pickup_dongles(coder))

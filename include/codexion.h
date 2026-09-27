@@ -25,7 +25,7 @@ typedef struct  s_dongle
 {
     pthread_mutex_t dongle;
     long            up_after;
-}
+}	t_dongle;
 
 
 typedef struct  s_request
@@ -99,7 +99,7 @@ void    *coder_protocol(void *coder);
 void    compile(t_coder *coder);
 void    debug(t_coder *coder);
 void    refactor(t_coder *coder);
-void    pickup_dongles(t_coder *coder);
+int		pickup_dongles(t_coder *coder);
 void    putdown_dongles(t_coder *coder);
 int 	print_state(t_coders *coders, int id, char *msg);
 
