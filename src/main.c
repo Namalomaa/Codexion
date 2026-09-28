@@ -20,24 +20,20 @@ int	init_dongles(t_coders *coders)
 			sizeof(pthread_mutex_t) * coders->number_of_coders);
 	if (!coders->dongles)
 		return (0);
-	coders->dongle_cold_at = malloc(
-			sizeof(long) * coders->number_of_coders);
-	if (!coders->dongle_cold_at)
-		return (0);
 	i = 0;
 	while (i < coders->number_of_coders)
 	{
-		pthread_mutex_init(&coders->dongles[i], NULL);
-		coders->coders[i].right_dongle = &coders->dongles[i];
+		pthread_mutex_init(&coders->dongles[i].dongle, NULL);
+		coders->coders[i].right_dongle->dongle = coders->dongles[i].dongle;
 		if (coders->number_of_coders == 1)
-			coders->coders[i].left_dongle = NULL;
+			coders->coders[i].left_dongle->dongle = NULL;
 		else
 		{
-		coders->coders[i].left_dongle = &coders->dongles[
+		coders->coders[i].left_dongle->dongle = &coders->dongles[
 			(i + 1) % coders->number_of_coders];
 		}
 		coders->coders[i].simulation = coders;
-        coders->dongle_cold_at[i] = coders->start_time;
+        coders->dongles[i].cold_at = coders->start_time;
 		i ++;
 	}
 	pthread_cond_init(&coders->simulation_cond, NULL);

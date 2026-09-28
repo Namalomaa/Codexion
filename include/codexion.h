@@ -10,23 +10,24 @@
 
 typedef struct s_coders t_coders;
 
+typedef struct  s_dongle
+{
+    pthread_mutex_t dongle;
+	int				reserved;
+    long            cold_at;
+}	t_dongle;
+
 typedef struct s_coder
 {
 	int				id;
 	int				compile_count;
 	long			last_compile_start;
+	int				granted;
 	pthread_t		thread;
-	pthread_mutex_t	*left_dongle;
-    pthread_mutex_t	*right_dongle;
+	t_dongle		*left_dongle;
+    t_dongle		*right_dongle;
     t_coders    	*simulation;
 }	t_coder;
-
-typedef struct  s_dongle
-{
-    pthread_mutex_t dongle;
-    long            up_after;
-}	t_dongle;
-
 
 typedef struct  s_request
 {
@@ -56,8 +57,8 @@ typedef struct s_coders
     int				stop;
 	char			*scheduler;
 	pthread_t		monitor_thread;
-	pthread_mutex_t	*dongles;
-    long            *dongle_cold_at;
+	t_dongle		*dongles;
+    // long            *dongle_cold_at;
     pthread_mutex_t	simulation_lock;
 	pthread_cond_t  simulation_cond;
 	t_coder 		*coders;
