@@ -17,19 +17,19 @@ int	init_dongles(t_coders *coders)
 	int	i;
 
 	coders->dongles = malloc(
-			sizeof(pthread_mutex_t) * coders->number_of_coders);
+			sizeof(t_dongle) * coders->number_of_coders);
 	if (!coders->dongles)
 		return (0);
 	i = 0;
 	while (i < coders->number_of_coders)
 	{
 		pthread_mutex_init(&coders->dongles[i].dongle, NULL);
-		coders->coders[i].right_dongle->dongle = coders->dongles[i].dongle;
+		coders->coders[i].right_dongle = &coders->dongles[i];
 		if (coders->number_of_coders == 1)
-			coders->coders[i].left_dongle->dongle = NULL;
+			coders->coders[i].left_dongle = NULL;
 		else
 		{
-		coders->coders[i].left_dongle->dongle = &coders->dongles[
+		coders->coders[i].left_dongle = &coders->dongles[
 			(i + 1) % coders->number_of_coders];
 		}
 		coders->coders[i].simulation = coders;
@@ -71,6 +71,7 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders)
 		coders->coders[i].id = i + 1;
 		coders->coders[i].compile_count = 0;
 		coders->coders[i].last_compile_start = coders->start_time;
+		coders->coders[i].granted = 0;
 	}
 	coders->time_to_burnout = numeric[1];
 	coders->time_to_compile = numeric[2];
@@ -95,7 +96,7 @@ int	main(int argc, char **argv)
 	while (++ i < coders.number_of_coders)
 	{
 		pthread_join(coders.coders[i].thread, NULL);
-		pthread_mutex_destroy(&coders.dongles[i]);
+		pthread_mutex_destroy(&coders.dongles[i].dongle);
 	}
 	pthread_join(coders.monitor_thread, NULL);
 	pthread_cond_destroy(&coders.simulation_cond);

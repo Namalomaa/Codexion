@@ -80,15 +80,15 @@ int take_dongle(t_coder *coder, int idx)
     t_coders *coders;
 
     coders = coder->simulation;
-    pthread_mutex_lock(&coders->dongles[idx]);
+    pthread_mutex_lock(&coders->dongles[idx].dongle);
 
     while (!get_stop(coders)
-        && get_current_time() < coders->dongle_cold_at[idx])
+        && get_current_time() < coders->dongles[idx].cold_at)
         usleep(1000);
 
     if (get_stop(coders))
     {
-        pthread_mutex_unlock(&coders->dongles[idx]);
+        pthread_mutex_unlock(&coders->dongles[idx].dongle);
         return (0);
     }
 
@@ -110,14 +110,14 @@ int	pickup_dongles(t_coder *coder)
 		if (!take_dongle(coder, right_idx))
 			return (0);
 		if (!take_dongle(coder, left_idx))
-			return (pthread_mutex_unlock(coder->right_dongle), 0);
+			return (pthread_mutex_unlock(&coder->right_dongle->dongle), 0);
 	}
 	else
 	{
 		if (!take_dongle(coder, left_idx))
 			return (0);
 		if (!take_dongle(coder, right_idx))
-			return (pthread_mutex_unlock(coder->left_dongle), 0);
+			return (pthread_mutex_unlock(&coder->left_dongle->dongle), 0);
 	}
 	return (1);
 }
@@ -133,11 +133,11 @@ void	putdown_dongles(t_coder *coder)
 	right_id = coder->id - 1;
 	left_id = coder->id % coders->number_of_coders;
 	current_time = get_current_time();
-	coders->dongle_cold_at[left_id] = current_time + coders->dongle_cooldown;
-	pthread_mutex_unlock(coder->left_dongle);
+	coders->dongles[left_id].cold_at = current_time + coders->dongle_cooldown;
+	pthread_mutex_unlock(&coder->left_dongle->dongle);
 	current_time = get_current_time();
-	coders->dongle_cold_at[right_id] = current_time + coders->dongle_cooldown;
-	pthread_mutex_unlock(coder->right_dongle);
+	coders->dongles[right_id].cold_at = current_time + coders->dongle_cooldown;
+	pthread_mutex_unlock(&coder->right_dongle->dongle);
 }
 
 void	*one_coder(t_coder *coder)
@@ -152,7 +152,7 @@ void	*one_coder(t_coder *coder)
 		pthread_cond_wait(&coders->simulation_cond,
 			&coders->simulation_lock);
 	pthread_mutex_unlock(&coders->simulation_lock);
-	pthread_mutex_unlock(coder->right_dongle);
+	pthread_mutex_unlock(&coder->right_dongle->dongle);
 	return (NULL);
 }
 
