@@ -27,6 +27,12 @@ int	print_burnout(t_coders *coders, int id)
 		done = 1;
 	}
 	pthread_mutex_unlock(&coders->simulation_lock);
+	if (done)
+	{
+		pthread_mutex_lock(&coders->scheduler_lock);
+		pthread_cond_broadcast(&coders->scheduler_cond);
+		pthread_mutex_unlock(&coders->scheduler_lock);
+	}
 	return (done);
 }
 

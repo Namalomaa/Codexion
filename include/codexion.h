@@ -111,6 +111,11 @@ int	 	print_burnout(t_coders *coders, int id);
 // dongles control
 void    reserve_dongles(t_coder *coder);
 void    release_dongles(t_coder *coder);
+void    release_resources(t_coder *coder);
 int    dongle_is_available(t_coder *coder);
+
+// Q
+void	dequeue_at(t_queue *queue, int index)
+
 
 #endif

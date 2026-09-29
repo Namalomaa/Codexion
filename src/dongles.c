@@ -1,5 +1,22 @@
 # include "codexion.h"
 
+
+void    try_grant_resources(t_coders *coders)
+{
+    t_request   *request;
+
+    if (coders->queue.size == 0)
+        return ;
+    request = &coders->queue.request[0];
+    if (dongle_is_available(request->coder))
+    {
+        reserve_dongles(request->coder);
+        dequeue_at(&coders->queue, 0);
+        pthread_cond_broadcast(&coders->scheduler_cond);
+    }
+
+}
+
 int    dongle_is_available(t_coder *coder)
 {
     t_dongle    *left;
@@ -32,7 +49,7 @@ void    release_resources(t_coder *coder)
     coders = coder->simulation;
     pthread_mutex_lock(&coders->scheduler_lock);
     release_dongles(coder);
-    // try grant the request
+    try_grant_resources(coders);
     pthread_cond_broadcast(&coders->scheduler_cond);
     pthread_mutex_unlock(&coders->scheduler_lock);
 }
