@@ -89,6 +89,16 @@ void	*one_coder(t_coder *coder)
 	return (NULL);
 }
 
+int		request_resources(t_coder *coder)
+{
+	pthread_mutex_lock(&coder->simulation->scheduler_lock);
+	enqueue(&coder->simulation->queue, coder);
+	while (!coder->granted && !get_stop(&coder->simulation))
+		pthread_cond_wait(&coder->simulation->scheduler_cond,
+			&coder->simulation->scheduler_lock);
+	pthread_mutex_unlock(&coder->simulation->scheduler_lock);
+}
+
 void	*coder_protocol(void *arg)
 {
 	t_coder	*coder;
@@ -98,6 +108,8 @@ void	*coder_protocol(void *arg)
 		return (one_coder(coder));
 	while (!get_stop(coder->simulation))
 	{
+		if (!request_resources(coder))
+			break ;
 		compile(coder);
 		if (get_stop(coder->simulation))
 			break ;

@@ -40,22 +40,6 @@ static long    *validate_split(char **parts)
 	return (nums);
 }
 
-// static int total_length(int argc, char **argv)
-// {
-// 	int i;
-// 	int len;
-
-// 	len = 0;
-// 	i = 1; // start from argv[1]
-// 	while(i < argc)
-// 	{
-// 		len += strlen(argv[i]) + 1;
-// 		i ++;
-// 	}
-// 	return (len);
-// }
-
-
 static char *get_all_args_as_strings(int argc, char **argv)
 {
 	char    *all;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                       :::      ::::::::    */
-/*   protection.c                                      :+:      :+:    :+:    */
+/*   protection.c                                       :+:      :+:    :+:   */
 /*                                                   +:+ +:+         +:+      */
 /*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/09/23 22:57:02 by namaloma         #+#    #+#              */
-/*   Updated: 2026/09/23 22:57:03 by namaloma        ###   ########.fr        */
+/*   Updated: 2026/09/29 13:51:05 by namaloma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,6 @@ void	set_stop(t_coders *coders, int value)
 	pthread_mutex_lock(&coders->simulation_lock);
 	coders->stop = value;
 	pthread_cond_broadcast(&coders->simulation_cond);
-	pthread_mutex_unlock(&coders->simulation_lock);
+    pthread_cond_broadcast(&coders->scheduler_cond);
+    pthread_mutex_unlock(&coders->simulation_lock);
 }

@@ -59,7 +59,6 @@ typedef struct s_coders
 	char			*scheduler;
 	pthread_t		monitor_thread;
 	t_dongle		*dongles;
-    // long            *dongle_cold_at;
     pthread_mutex_t	simulation_lock;
 	pthread_cond_t  simulation_cond;
 	pthread_mutex_t	scheduler_lock;
@@ -103,11 +102,15 @@ void    *coder_protocol(void *coder);
 void    compile(t_coder *coder);
 void    debug(t_coder *coder);
 void    refactor(t_coder *coder);
-int		pickup_dongles(t_coder *coder);
-void    putdown_dongles(t_coder *coder);
 int 	print_state(t_coders *coders, int id, char *msg);
 
+// monitor and burnout detection
 void    *coders_monitor(void *arg);
 int	 	print_burnout(t_coders *coders, int id);
+
+// dongles control
+void    reserve_dongles(t_coder *coder);
+void    release_dongles(t_coder *coder);
+int    dongle_is_available(t_coder *coder);
 
 #endif
