@@ -12,6 +12,17 @@
 
 #include "codexion.h"
 
+
+int	init_request(t_request *request, t_coder *coder)
+{
+	if (!request || !coder)
+		return (0);
+	request->deadline = get_last_compile_start(coder) + coder->simulation->time_to_burnout;
+	request->coder = coder;
+	request->request_time = get_current_time();
+	return (1);
+}
+
 int	init_dongles(t_coders *coders)
 {
 	int	i;
@@ -20,22 +31,23 @@ int	init_dongles(t_coders *coders)
 			sizeof(t_dongle) * coders->number_of_coders);
 	if (!coders->dongles)
 		return (0);
-	i = 0;
-	while (i < coders->number_of_coders)
+	i = -1;
+	while (++ i < coders->number_of_coders)
 	{
-		pthread_mutex_init(&coders->dongles[i].dongle, NULL);
+		coders->coders[i].right_idx = i;
+		coders->coders[i].left_idx = (i + 1) % coders->number_of_coders;
 		coders->coders[i].right_dongle = &coders->dongles[i];
 		if (coders->number_of_coders == 1)
 			coders->coders[i].left_dongle = NULL;
 		else
-		{
-		coders->coders[i].left_dongle = &coders->dongles[
-			(i + 1) % coders->number_of_coders];
-		}
+			coders->coders[i].left_dongle = &coders->dongles[coders->coders[i].left_idx];
 		coders->coders[i].simulation = coders;
         coders->dongles[i].cold_at = coders->start_time;
-		i ++;
+		coders->dongles[i].reserved = 0;
+		coders->coders[i].granted = 0;
 	}
+	pthread_mutex_init(&coders->scheduler_lock, NULL);
+	pthread_cond_init(&coders->scheduler_cond, NULL);
 	pthread_cond_init(&coders->simulation_cond, NULL);
 	pthread_mutex_init(&coders->simulation_lock, NULL);
 	return (1);
@@ -80,6 +92,8 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders)
 	coders->number_of_compiles_required = numeric[5];
 	coders->dongle_cooldown = numeric[6];
 	coders->scheduler = ft_strdup(scheduler);
+	if (!init_queue(&coders->queue, coders))
+		return ;
 	create_threads(coders);
 	pthread_create(&coders->monitor_thread, NULL, coders_monitor, coders);
 }
@@ -94,15 +108,15 @@ int	main(int argc, char **argv)
 		return (1);
 	i = -1;
 	while (++ i < coders.number_of_coders)
-	{
 		pthread_join(coders.coders[i].thread, NULL);
-		pthread_mutex_destroy(&coders.dongles[i].dongle);
-	}
 	pthread_join(coders.monitor_thread, NULL);
 	pthread_cond_destroy(&coders.simulation_cond);
+	pthread_cond_destroy(&coders.scheduler_cond);
+	pthread_mutex_destroy(&coders.scheduler_lock);
 	pthread_mutex_destroy(&coders.simulation_lock);
 	free(coders.coders);
 	free(coders.scheduler);
 	free(coders.dongles);
+	free(coders.queue.request);
 	return (0);
 }

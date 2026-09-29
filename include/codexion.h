@@ -12,7 +12,6 @@ typedef struct s_coders t_coders;
 
 typedef struct  s_dongle
 {
-    pthread_mutex_t dongle;
 	int				reserved;
     long            cold_at;
 }	t_dongle;
@@ -23,6 +22,8 @@ typedef struct s_coder
 	int				compile_count;
 	long			last_compile_start;
 	int				granted;
+	int				right_idx;
+	int				left_idx;
 	pthread_t		thread;
 	t_dongle		*left_dongle;
     t_dongle		*right_dongle;
