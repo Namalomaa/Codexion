@@ -88,15 +88,22 @@ void	*one_coder(t_coder *coder)
 	pthread_mutex_unlock(&coders->simulation_lock);
 	return (NULL);
 }
-
 int		request_resources(t_coder *coder)
 {
-	pthread_mutex_lock(&coder->simulation->scheduler_lock);
+	t_coders	*coders;
+
+	coders = coder->simulation;
+	pthread_mutex_lock(&coders->scheduler_lock);
+
 	enqueue(&coder->simulation->queue, coder);
-	while (!coder->granted && !get_stop(&coder->simulation))
+	// try to grant the request.
+	while (!coder->granted && !get_stop(coder->simulation))
 		pthread_cond_wait(&coder->simulation->scheduler_cond,
 			&coder->simulation->scheduler_lock);
-	pthread_mutex_unlock(&coder->simulation->scheduler_lock);
+	if (get_stop(coders))
+			return (0);
+	pthread_mutex_unlock(&coders->scheduler_lock);
+	return (1);
 }
 
 void	*coder_protocol(void *arg)

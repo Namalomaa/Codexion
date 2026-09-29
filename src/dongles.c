@@ -24,6 +24,19 @@ void    reserve_dongles(t_coder *coder)
     coder->granted = 1;
 }
 
+
+void    release_resources(t_coder *coder)
+{
+    t_coders    *coders;
+
+    coders = coder->simulation;
+    pthread_mutex_lock(&coders->scheduler_lock);
+    release_dongles(coder);
+    // try grant the request
+    pthread_cond_broadcast(&coders->scheduler_cond);
+    pthread_mutex_unlock(&coders->scheduler_lock);
+}
+
 void    release_dongles(t_coder *coder)
 {
     long    now;
@@ -32,6 +45,6 @@ void    release_dongles(t_coder *coder)
     coder->right_dongle->reserved = 0;
     coder->right_dongle->cold_at = now + coder->simulation->dongle_cooldown;
     coder->left_dongle->reserved = 0;
-    coder->right_dongle->cold_at = now + coder->simulation->dongle_cooldown;
+    coder->left_dongle->cold_at = now + coder->simulation->dongle_cooldown;
     coder->granted = 0;
 }
