@@ -116,7 +116,7 @@ int		dongle_is_available(t_coder *coder);
 
 // Q
 int		init_queue(t_queue *queue, t_coders *coders);
-void	pop_heap(t_queue *queue, int index);
+void	pop_heap(t_queue *queue, t_coders *coders);
 int		push_to_heap(t_queue *queue, t_coder *coder);
 
 

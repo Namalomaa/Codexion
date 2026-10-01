@@ -7,11 +7,13 @@ void    try_grant_req(t_coders *coders)
 
     if (coders->queue.size == 0)
         return ;
-    request = &coders->queue.request[0];
-    if (dongle_is_available(request->coder))
+    while (coders->queue.size > 0)
     {
+        request = &coders->queue.request[0];
+        if (!dongle_is_available(request->coder))
+            break ;
         reserve_dongles(request->coder);
-        pop_heap(&coders->queue, coders);
+        pop_heap(&coders->queue, 0);
         pthread_cond_broadcast(&coders->scheduler_cond);
     }
 
