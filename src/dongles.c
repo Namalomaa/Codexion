@@ -11,7 +11,7 @@ void    try_grant_resources(t_coders *coders)
     if (dongle_is_available(request->coder))
     {
         reserve_dongles(request->coder);
-        dequeue_at(&coders->queue, 0);
+        pop_heap(&coders->queue, coders);
         pthread_cond_broadcast(&coders->scheduler_cond);
     }
 
@@ -41,6 +41,17 @@ void    reserve_dongles(t_coder *coder)
     coder->granted = 1;
 }
 
+static void    release_dongles(t_coder *coder)
+{
+    long    now;
+
+    now = get_current_time();
+    coder->right_dongle->reserved = 0;
+    coder->right_dongle->cold_at = now + coder->simulation->dongle_cooldown;
+    coder->left_dongle->reserved = 0;
+    coder->left_dongle->cold_at = now + coder->simulation->dongle_cooldown;
+    coder->granted = 0;
+}
 
 void    release_resources(t_coder *coder)
 {
@@ -52,16 +63,4 @@ void    release_resources(t_coder *coder)
     try_grant_resources(coders);
     pthread_cond_broadcast(&coders->scheduler_cond);
     pthread_mutex_unlock(&coders->scheduler_lock);
-}
-
-void    release_dongles(t_coder *coder)
-{
-    long    now;
-
-    now = get_current_time();
-    coder->right_dongle->reserved = 0;
-    coder->right_dongle->cold_at = now + coder->simulation->dongle_cooldown;
-    coder->left_dongle->reserved = 0;
-    coder->left_dongle->cold_at = now + coder->simulation->dongle_cooldown;
-    coder->granted = 0;
 }

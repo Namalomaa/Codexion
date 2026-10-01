@@ -75,7 +75,7 @@ void	refactor(t_coder *coder)
 	}
 }
 
-void	*one_coder(t_coder *coder)
+static void	*one_coder(t_coder *coder)
 {
 	t_coders	*coders;
 
@@ -88,20 +88,20 @@ void	*one_coder(t_coder *coder)
 	pthread_mutex_unlock(&coders->simulation_lock);
 	return (NULL);
 }
-int		request_resources(t_coder *coder)
+
+static int	request_resources(t_coder *coder)
 {
 	t_coders	*coders;
 
 	coders = coder->simulation;
 	pthread_mutex_lock(&coders->scheduler_lock);
 
-	enqueue(&coder->simulation->queue, coder);
+	push_to_heap(&coder->simulation->queue, coder);
 	try_grant_resources(coders);
 	while (!coder->granted && !get_stop(coder->simulation))
 	{
-		pthread_cond_timedwait(&coder->simulation->scheduler_cond,
-			&coder->simulation->scheduler_lock,
-		&timeout);
+		pthread_cond_wait(&coder->simulation->scheduler_cond,
+			&coder->simulation->scheduler_lock);
 		try_grant_recources(coders);
 	}
 	if (get_stop(coders))

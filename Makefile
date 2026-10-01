@@ -1,17 +1,19 @@
 NAME	=	codexion
-CC	=	cc
+CC		=	cc
 CFLAGS	=	-Wall -Wextra -Werror -pthread -g -I include
 
-SRC	=	./src/main.c \
-		./src/parsing.c \
-		./src/ft_split.c \
-		./src/helpers.c \
-		./src/protocol.c \
-		./src/monitor.c \
-		./src/protection.c
+SRC		=	./src/main.c \
+			./src/parsing.c \
+			./src/ft_split.c \
+			./src/helpers.c \
+			./src/protocol.c \
+			./src/monitor.c \
+			./src/protection.c \
+			./src/dongles.c \
+			./src/prio_queue/queue_funcs.c
 
-OBJ = $(SRC:.c=.o)
-all = $(NAME)
+OBJ		=	$(SRC:.c=.o)
+all		=	$(NAME)
 
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)

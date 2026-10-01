@@ -19,6 +19,7 @@ int	init_request(t_request *request, t_coder *coder)
 		return (0);
 	request->deadline = get_last_compile_start(coder) + coder->simulation->time_to_burnout;
 	request->coder = coder;
+	request->sequence = coder->simulation->next_sequence++;
 	request->request_time = get_current_time();
 	return (1);
 }
@@ -53,7 +54,7 @@ int	init_dongles(t_coders *coders)
 	return (1);
 }
 
-void	create_threads(t_coders *coders)
+static void	create_threads(t_coders *coders)
 {
 	int	i;
 
@@ -92,6 +93,7 @@ void	init_coders(long *numeric, char *scheduler, t_coders *coders)
 	coders->number_of_compiles_required = numeric[5];
 	coders->dongle_cooldown = numeric[6];
 	coders->scheduler = ft_strdup(scheduler);
+	coders->next_sequence = 0;
 	if (!init_queue(&coders->queue, coders))
 		return ;
 	create_threads(coders);
