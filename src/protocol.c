@@ -96,13 +96,14 @@ static int	request_resources(t_coder *coder)
 	coders = coder->simulation;
 	pthread_mutex_lock(&coders->scheduler_lock);
 
-	push_to_heap(&coder->simulation->queue, coder);
-	try_grant_resources(coders);
+	if	(!push_to_heap(&coders->queue, coder))
+		return (pthread_mutex_unlock(&coders->scheduler_lock), 0);
+	try_grant_req(coders);
 	while (!coder->granted && !get_stop(coder->simulation))
 	{
 		pthread_cond_wait(&coder->simulation->scheduler_cond,
 			&coder->simulation->scheduler_lock);
-		try_grant_recources(coders);
+		try_grant_req(coders);
 	}
 	if (get_stop(coders))
 			return (pthread_mutex_unlock(&coders->scheduler_lock), 0);

@@ -1,7 +1,7 @@
 # include "codexion.h"
 
 
-void    try_grant_resources(t_coders *coders)
+void    try_grant_req(t_coders *coders)
 {
     t_request   *request;
 
@@ -60,7 +60,7 @@ void    release_resources(t_coder *coder)
     coders = coder->simulation;
     pthread_mutex_lock(&coders->scheduler_lock);
     release_dongles(coder);
-    try_grant_resources(coders);
+    try_grant_req(coders);
     pthread_cond_broadcast(&coders->scheduler_cond);
     pthread_mutex_unlock(&coders->scheduler_lock);
 }

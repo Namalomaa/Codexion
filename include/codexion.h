@@ -109,7 +109,7 @@ void    *coders_monitor(void *arg);
 int	 	print_burnout(t_coders *coders, int id);
 
 // dongles control
-void	try_grant_resources(t_coders *coders);
+void	try_grant_req(t_coders *coders);
 void	reserve_dongles(t_coder *coder);
 void	release_resources(t_coder *coder);
 int		dongle_is_available(t_coder *coder);

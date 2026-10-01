@@ -11,13 +11,12 @@ static void swap_requests(t_request *a, t_request *b)
 
 static int higher_priority(t_request *a, t_request *b, t_coders *coders)
 {
-    if (strcmp(&coders->scheduler, "fifo") == 0)
+    if (strcmp(coders->scheduler, "fifo") == 0)
         return (a->sequence < b->sequence);
-    else if (strcmp(&coders->scheduler, "edf") == 0)
-    {
-        if (a->deadline != b->deadline)
-            return (a->deadline < b->deadline);
-    }
+
+    if (a->deadline != b->deadline)
+        return (a->deadline < b->deadline);
+
     return (a->deadline < b->deadline);
 }
 
