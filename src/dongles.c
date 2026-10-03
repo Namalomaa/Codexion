@@ -13,7 +13,7 @@ void    try_grant_req(t_coders *coders)
         if (!dongle_is_available(request->coder))
             break ;
         reserve_dongles(request->coder);
-        pop_heap(&coders->queue, 0);
+        pop_heap(&coders->queue, coders);
         pthread_cond_broadcast(&coders->scheduler_cond);
     }
 
