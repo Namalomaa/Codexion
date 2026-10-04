@@ -28,7 +28,7 @@ int	print_state(t_coders *coders, int id, char *msg)
 	return (done);
 }
 
-long	get_current_time(void)
+long	get_current_time()
 {
 	struct timespec	time;
 
@@ -101,8 +101,8 @@ static int	request_resources(t_coder *coder)
 	try_grant_req(coders);
 	while (!coder->granted && !get_stop(coder->simulation))
 	{
-		pthread_cond_wait(&coder->simulation->scheduler_cond,
-			&coder->simulation->scheduler_lock);
+		pthread_cond_timedwait(&coder->simulation->scheduler_cond,
+			&coder->simulation->scheduler_lock, );
 		try_grant_req(coders);
 	}
 	if (get_stop(coders))
