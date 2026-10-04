@@ -36,6 +36,18 @@ long	get_current_time()
 	return (time.tv_sec * 1000 + time.tv_nsec / 1000000);
 }
 
+void	calc_timeout(long duration, struct timespec *timeout)
+{
+	clock_gettime(CLOCK_REALTIME, timeout);
+	timeout->tv_sec += duration / 1000;
+	timeout->tv_nsec += (duration % 1000) * 1000000;
+	if (timeout->tv_nsec > 1000000000)
+	{
+		timeout->tv_sec += 1;
+		timeout->tv_nsec -= 1000000000;
+	}
+}
+
 void	compile(t_coder *coder)
 {
 	long	start;
@@ -92,8 +104,16 @@ static void	*one_coder(t_coder *coder)
 static int	request_resources(t_coder *coder)
 {
 	t_coders	*coders;
+	long		remaining;
+	long		wake_at;
+	struct 		timespec	timeout;
 
 	coders = coder->simulation;
+	if (coder->left_dongle > coder->right_dongle)
+		wake_at = coder->left_dongle->cold_at;
+	else
+		wake_at = coder->left_dongle->cold_at;
+	remaining = wake_at - get_current_time();
 	pthread_mutex_lock(&coders->scheduler_lock);
 
 	if	(!push_to_heap(&coders->queue, coder))
@@ -101,9 +121,13 @@ static int	request_resources(t_coder *coder)
 	try_grant_req(coders);
 	while (!coder->granted && !get_stop(coder->simulation))
 	{
-		pthread_cond_timedwait(&coder->simulation->scheduler_cond,
-			&coder->simulation->scheduler_lock, );
-		try_grant_req(coders);
+		if (remaining > 0)
+		{
+			calc_timeout(remaining, &timeout);
+			pthread_cond_timedwait(&coder->simulation->scheduler_cond,
+			&coder->simulation->scheduler_lock, &timeout);
+			try_grant_req(coders);
+		}
 	}
 	if (get_stop(coders))
 			return (pthread_mutex_unlock(&coders->scheduler_lock), 0);

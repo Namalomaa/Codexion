@@ -114,7 +114,7 @@ void	reserve_dongles(t_coder *coder);
 void	release_resources(t_coder *coder);
 int		dongle_is_available(t_coder *coder);
 
-// Q
+// Priority Q
 int		init_queue(t_queue *queue, t_coders *coders);
 void	pop_heap(t_queue *queue, t_coders *coders);
 int		push_to_heap(t_queue *queue, t_coder *coder);
