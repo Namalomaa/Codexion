@@ -8,6 +8,7 @@
 # include <time.h>
 # include <unistd.h>
 
+
 typedef struct s_coders t_coders;
 
 typedef struct  s_dongle

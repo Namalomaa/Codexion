@@ -16,8 +16,7 @@ static int higher_priority(t_request *a, t_request *b, t_coders *coders)
 
     if (a->deadline != b->deadline)
         return (a->deadline < b->deadline);
-
-    return (a->deadline < b->deadline);
+    return (a->sequence < b->sequence);
 }
 
 static void heapify_up(t_queue *queue, int i, t_coders *coders)
@@ -78,6 +77,8 @@ int push_to_heap(t_queue *queue, t_coder *coder)
         return (0);
     i = queue->size;
     init_request(&queue->request[queue->size], coder);
+    printf("REQ   coder=%d seq=%d\n",
+        coder->id, queue->request[i].sequence);
     queue->size ++;
     heapify_up(queue, i, coders);
     return (1);
