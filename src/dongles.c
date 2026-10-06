@@ -13,8 +13,10 @@ void    try_grant_req(t_coders *coders)
         if (!dongle_is_available(request->coder))
             break ;
         reserve_dongles(request->coder);
-        printf("GRANT coder=%d seq=%d\n",
-            request->coder->id, request->sequence);
+        // printf("GRANT coder=%d seq=%d deadline=%ld\n",
+        //     request->coder->id,
+        //     request->sequence,
+        //     request->deadline);
         pop_heap(&coders->queue, coders);
         pthread_cond_broadcast(&coders->scheduler_cond);
     }
