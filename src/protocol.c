@@ -12,57 +12,6 @@
 
 #include "codexion.h"
 
-long	max(long a, long b)
-{
-	if (a > b)
-		return (a);
-	return (b);
-}
-
-int	print_state(t_coders *coders, int id, char *msg)
-{
-	int	done;
-	int	count;
-
-	if (strcmp(msg, "is compiling") == 0)
-		count = get_compile_count(&coders->coders[id - 1]) ;
-	pthread_mutex_lock(&coders->simulation_lock);
-	done = 0;
-	if (!coders->stop)
-	{
-		printf("%ld %i %s",
-			get_current_time() - coders->start_time, id, msg);
-		if (strcmp(msg, "is compiling") == 0)
-		printf(" [%d/%d]",
-			count + 1,
-			coders->number_of_compiles_required);
-		printf("\n");
-		done = 1;
-	}
-	pthread_mutex_unlock(&coders->simulation_lock);
-	return (done);
-}
-
-long	get_current_time()
-{
-	struct timespec	time;
-
-	clock_gettime(CLOCK_MONOTONIC, &time);
-	return (time.tv_sec * 1000 + time.tv_nsec / 1000000);
-}
-
-void	calc_timeout(long duration, struct timespec *timeout)
-{
-	clock_gettime(CLOCK_REALTIME, timeout);
-	timeout->tv_sec += duration / 1000;
-	timeout->tv_nsec += (duration % 1000) * 1000000;
-	if (timeout->tv_nsec >= 1000000000)
-	{
-		timeout->tv_sec += 1;
-		timeout->tv_nsec -= 1000000000;
-	}
-}
-
 void	compile(t_coder *coder)
 {
 	long	start;
@@ -71,7 +20,7 @@ void	compile(t_coder *coder)
 	set_last_compile_start(coder, start);
 	print_state(coder->simulation, coder->id, "is compiling");
 	while (!get_stop(coder->simulation)
-			&& get_current_time() - start < coder->simulation->time_to_compile)
+		&& get_current_time() - start < coder->simulation->time_to_compile)
 	{
 		usleep(1000);
 	}
@@ -114,60 +63,6 @@ static void	*one_coder(t_coder *coder)
 			&coders->simulation_lock);
 	pthread_mutex_unlock(&coders->simulation_lock);
 	return (NULL);
-}
-
-static void	wait_for_dongles(t_coders *coders, t_coder *root)
-{
-	long		remaining;
-	long		wake_at;
-	struct timespec timeout;
-
-	if (root->left_dongle->reserved || root->right_dongle->reserved)
-	{
-		pthread_cond_wait(&coders->scheduler_cond,
-			&coders->scheduler_lock);
-		return ;
-	}
-
-	wake_at = max(root->left_dongle->cold_at,
-		root->right_dongle->cold_at);
-	remaining = wake_at - get_current_time();
-	if (remaining <= 0)
-		return ;
-	calc_timeout(remaining, &timeout);
-	pthread_cond_timedwait(&coders->scheduler_cond,
-		&coders->scheduler_lock, &timeout);
-}
-
-static int	wait_for_resources(t_coders *coders, t_coder *coder)
-{
-	t_coder	*root;
-
-	while (!coder->granted && !get_stop(coders))
-	{
-		try_grant_req(coders);
-		if (coder->granted || get_stop(coders))
-			break ;
-		if (coders->queue.size == 0)
-			break ;
-		root = coders->queue.request[0].coder;
-		wait_for_dongles(coders, root);
-	}
-	return (!get_stop(coders) && coder->granted);
-}
-
-static int	request_resources(t_coder *coder)
-{
-	t_coders	*coders;
-	int			granted;
-
-	coders = coder->simulation;
-	pthread_mutex_lock(&coders->scheduler_lock);
-	if (!push_to_heap(&coders->queue, coder))
-		return (pthread_mutex_unlock(&coders->scheduler_lock), 0);
-	granted = wait_for_resources(coders, coder);
-	pthread_mutex_unlock(&coders->scheduler_lock);
-	return (granted);
 }
 
 void	*coder_protocol(void *arg)

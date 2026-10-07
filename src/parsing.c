@@ -104,7 +104,6 @@ int	parse_and_validate(int argc, char **argv, t_coders *coders)
 		return (free(all_str), split_free(numeric_part), 0);
 	}
 	scheduler = numeric_part[7];
-	scheduler = str_tolower(scheduler);
 	if (strcmp(scheduler, "edf") != 0
 			&& strcmp(scheduler, "fifo") != 0)
 	{

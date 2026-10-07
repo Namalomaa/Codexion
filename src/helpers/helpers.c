@@ -37,22 +37,6 @@ void	split_free(char **s)
 	free(s);
 }
 
-char	*str_tolower(char *s)
-{
-	int	i;
-
-	i = 0;
-	if (!s)
-		return (s);
-	while (s[i])
-	{
-		if (s[i] >= 'A' && s[i] <= 'Z')
-			s[i] += 32;
-		i++;
-	}
-	return (s);
-}
-
 char	*ft_strdup(const char *s)
 {
 	char	*ds;

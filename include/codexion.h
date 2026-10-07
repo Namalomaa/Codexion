@@ -94,8 +94,9 @@ void	split_free(char **s);
 long	ft_atol(const char *str);
 char	*ft_strdup(const char *s);
 int		parse_positive_int(const char *s, long *out);
-char	*str_tolower(char *s);
+void	calc_timeout(long duration, struct timespec *timeout);
 int		len(char **s);
+long	max(long a, long b);
 
 // getters and setters
 long	get_current_time(void);
@@ -116,6 +117,13 @@ int		print_state(t_coders *coders, int id, char *msg);
 void	*coders_monitor(void *arg);
 int		print_burnout(t_coders *coders, int id);
 
+// waiting and req resources
+void	wait_for_dongles(t_coders *coders, t_coder *root);
+int		wait_for_resources(t_coders *coders, t_coder *coder);
+int		request_resources(t_coder *coder);
+
+
+
 // dongles control
 void	try_grant_req(t_coders *coders);
 void	reserve_dongles(t_coder *coder);
@@ -124,7 +132,14 @@ int		dongle_is_available(t_coder *coder);
 
 // Priority Q
 int		init_queue(t_queue *queue, t_coders *coders);
-void	pop_heap(t_queue *queue, t_coders *coders);
 int		push_to_heap(t_queue *queue, t_coder *coder);
+void	pop_heap(t_queue *queue, t_coders *coders);
+
+// Priority Q helpers
+void	swap_requests(t_request *a, t_request *b);
+int		higher_priority(t_request *a, t_request *b, t_coders *coders);
+void	heapify_up(t_queue *queue, int i, t_coders *coders);
+void	heapify_down(t_queue *queue, int current_idx, t_coders *coders);
+
 
 #endif

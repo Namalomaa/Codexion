@@ -4,13 +4,17 @@ CFLAGS	=	-Wall -Wextra -Werror -pthread -g -I include
 
 SRC		=	./src/main.c \
 			./src/parsing.c \
-			./src/ft_split.c \
-			./src/helpers.c \
 			./src/protocol.c \
 			./src/monitor.c \
-			./src/protection.c \
 			./src/dongles.c \
-			./src/prio_queue/queue_funcs.c
+			./src/queue_funcs.c \
+			./src/helpers/ft_split.c \
+			./src/helpers/helpers.c \
+			./src/helpers/getters.c \
+			./src/helpers/setters.c \
+			./src/helpers/pending.c \
+			./src/helpers/queue_helpers.c \
+			./src/helpers/utils.c
 
 OBJ		=	$(SRC:.c=.o)
 all		=	$(NAME)
