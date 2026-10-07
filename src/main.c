@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: namaloma <namaloma@learner.42.tech>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/14 19:25:10 by namaloma          #+#    #+#             */
-/*   Updated: 2026/09/20 14:52:57 by namaloma         ###   ########.fr       */
+/*                                                       :::      ::::::::    */
+/*   main.c                                            :+:      :+:    :+:    */
+/*                                                   +:+ +:+         +:+      */
+/*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
+/*                                               +#+#+#+#+#+   +#+            */
+/*   Created: 2026/09/14 19:25:10 by namaloma         #+#    #+#              */
+/*   Updated: 2026/10/07 17:31:00 by namaloma        ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
 
 int	init_request(t_request *request, t_coder *coder)
 {
@@ -29,11 +28,11 @@ int	init_dongles(t_coders *coders)
 	int	i;
 
 	coders->dongles = malloc(
-			sizeof(t_dongle) * coders->number_of_coders);
+		sizeof(t_dongle)*coders->number_of_coders);
 	if (!coders->dongles)
 		return (0);
 	i = -1;
-	while (++ i < coders->number_of_coders)
+	while (++i < coders->number_of_coders)
 	{
 		coders->coders[i].right_idx = i;
 		coders->coders[i].left_idx = (i + 1) % coders->number_of_coders;
@@ -43,7 +42,7 @@ int	init_dongles(t_coders *coders)
 		else
 			coders->coders[i].left_dongle = &coders->dongles[coders->coders[i].left_idx];
 		coders->coders[i].simulation = coders;
-        coders->dongles[i].cold_at = coders->start_time;
+		coders->dongles[i].cold_at = coders->start_time;
 		coders->dongles[i].reserved = 0;
 		coders->coders[i].granted = 0;
 	}
@@ -63,23 +62,23 @@ static void	create_threads(t_coders *coders)
 	{
 		pthread_create(&coders->coders[i].thread, NULL,
 			coder_protocol, &coders->coders[i]);
-		i ++;
+		i++;
 	}
 }
 
 void	init_coders(long *numeric, char *scheduler, t_coders *coders)
 {
-	int		i;
+	int	i;
 
 	i = -1;
 	coders->number_of_coders = numeric[0];
-	coders->coders = malloc(sizeof(t_coder) * coders->number_of_coders);
+	coders->coders = malloc(sizeof(t_coder)*coders->number_of_coders);
 	if (!coders->coders)
 		return ;
 	coders->start_time = get_current_time();
-	if (! init_dongles(coders))
+	if (!init_dongles(coders))
 		return ;
-	while (++ i < coders->number_of_coders)
+	while (++i < coders->number_of_coders)
 	{
 		coders->coders[i].id = i + 1;
 		coders->coders[i].compile_count = 0;
@@ -109,7 +108,7 @@ int	main(int argc, char **argv)
 	if (!parse_and_validate(argc, argv, &coders))
 		return (1);
 	i = -1;
-	while (++ i < coders.number_of_coders)
+	while (++i < coders.number_of_coders)
 		pthread_join(coders.coders[i].thread, NULL);
 	pthread_join(coders.monitor_thread, NULL);
 	pthread_cond_destroy(&coders.simulation_cond);

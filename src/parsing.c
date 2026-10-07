@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: namaloma <namaloma@learner.42.tech>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/14 19:25:43 by namaloma          #+#    #+#             */
-/*   Updated: 2026/09/22 18:07:23 by namaloma         ###   ########.fr       */
+/*                                                       :::      ::::::::    */
+/*   parsing.c                                         :+:      :+:    :+:    */
+/*                                                   +:+ +:+         +:+      */
+/*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
+/*                                               +#+#+#+#+#+   +#+            */
+/*   Created: 2026/09/14 19:25:43 by namaloma         #+#    #+#              */
+/*   Updated: 2026/10/07 17:29:56 by namaloma        ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static long    *validate_split(char **parts)
+static long	*validate_split(char **parts)
 {
 	int		i;
 	long	n;
-	long    *nums;
+	long	*nums;
 
 	if (!parts || !parts[0])
 		return (NULL);
@@ -35,25 +35,25 @@ static long    *validate_split(char **parts)
 			return (free(nums), NULL);
 		}
 		nums[i] = n;
-		i ++;
+		i++;
 	}
 	return (nums);
 }
 
-static char *get_all_args_as_strings(int argc, char **argv)
+static char	*get_all_args_as_strings(int argc, char **argv)
 {
-	char    *all;
-	int     total;
-	int     i;
-	int     j;
-	int     idx;
+	char	*all;
+	int		total;
+	int		i;
+	int		j;
+	int		idx;
 
 	total = 0;
 	i = 1;
 	while (i < argc)
 	{
 		total += strlen(argv[i]) + 1;
-		i ++;
+		i++;
 	}
 	all = malloc(sizeof(char) * (total + 1));
 	if (!all)
@@ -64,27 +64,33 @@ static char *get_all_args_as_strings(int argc, char **argv)
 	{
 		j = 0;
 		while (argv[i][j])
-			all[idx ++] = argv[i][j ++];
+			all[idx++] = argv[i][j++];
 		if (i < argc - 1)
-			all[idx ++] = ' ';
-		i ++;
+			all[idx++] = ' ';
+		i++;
 	}
 	all[idx] = '\0';
 	return (all);
 	//returns a string containing all args seperated by spaces.
 }
 
-int parse_and_validate(int argc, char **argv, t_coders *coders)
+int	parse_and_validate(int argc, char **argv, t_coders *coders)
 {
-	char    *all_str; // Holds all the arguments as a single string
-	char    **numeric_part;// Holds the split parts of the arguments
-	long    *valid_nums; // the first 7 args as int
-	char    *scheduler;
+	char	*all_str;
+
+	// Holds all the arguments as a single string
+	char	**numeric_part;
+
+	// Holds the split parts of the arguments
+	long	*valid_nums;
+
+	// the first 7 args as int
+	char	*scheduler;
 
 	if (argc < 2)
 		return (fprintf(stderr, "Error: no arguments provided\n"), 0);
 	all_str = get_all_args_as_strings(argc, argv);
-	if (! all_str)
+	if (!all_str)
 		return (fprintf(stderr, "Error: malloc failed\n"), 0);
 	numeric_part = ft_split(all_str, ' ');
 	if (!numeric_part)
@@ -100,17 +106,17 @@ int parse_and_validate(int argc, char **argv, t_coders *coders)
 	scheduler = numeric_part[7];
 	scheduler = str_tolower(scheduler);
 	if (strcmp(scheduler, "edf") != 0
-		&& strcmp(scheduler, "fifo") != 0)
+			&& strcmp(scheduler, "fifo") != 0)
 	{
 		fprintf(stderr, "Error: scheduler must be 'fifo' or 'edf'\n");
 		return (free(all_str), split_free(numeric_part), 0);
 	}
 	valid_nums = validate_split(numeric_part);
 	if (!valid_nums)
-		return(free(all_str), split_free(numeric_part), 0);
+		return (free(all_str), split_free(numeric_part), 0);
 	init_coders(valid_nums, scheduler, coders);
 	split_free(numeric_part);
-	free (all_str);
-	free (valid_nums);
+	free(all_str);
+	free(valid_nums);
 	return (1);
 }

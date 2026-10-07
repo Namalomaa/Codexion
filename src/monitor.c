@@ -6,7 +6,7 @@
 /*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/09/23 22:50:51 by namaloma         #+#    #+#              */
-/*   Updated: 2026/09/23 22:55:44 by namaloma        ###   ########.fr        */
+/*   Updated: 2026/10/07 17:30:08 by namaloma        ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	*coders_monitor(void *arg)
 		{
 			if (get_compile_count(&coders->coders[i]) >= coders->number_of_compiles_required)
 			{
-				all_compiled ++;
-				i ++;
+				all_compiled++;
+				i++;
 				continue ;
 			}
 			if (get_current_time() - get_last_compile_start(&coders->coders[i]) >= coders->time_to_burnout)
