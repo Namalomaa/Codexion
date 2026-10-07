@@ -49,6 +49,12 @@ void	*coders_monitor(void *arg)
 		i = 0;
 		while (i < coders->number_of_coders)
 		{
+			if (get_compile_count(&coders->coders[i]) >= coders->number_of_compiles_required)
+			{
+				all_compiled ++;
+				i ++;
+				continue ;
+			}
 			if (get_current_time() - get_last_compile_start(&coders->coders[i]) >= coders->time_to_burnout)
 			{
 				print_burnout(coders, coders->coders[i].id);

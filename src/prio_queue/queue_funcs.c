@@ -77,8 +77,8 @@ int push_to_heap(t_queue *queue, t_coder *coder)
         return (0);
     i = queue->size;
     init_request(&queue->request[queue->size], coder);
-    // printf("REQ   coder=%d seq=%d\n deadline=%ld\n",
-    //     coder->id, queue->request[i].sequence, queue->request[i].deadline);
+    printf("REQ   coder=%d seq=%d\n deadline=%ld\n",
+        coder->id, queue->request[i].sequence, queue->request[i].deadline);
     queue->size ++;
     heapify_up(queue, i, coders);
     return (1);
