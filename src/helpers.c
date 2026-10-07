@@ -101,7 +101,7 @@ int	parse_positive_int(const char *s, long *out)
 		n = n * 10 + digit;
 		i++;
 	}
-	if (n <= 0)
+	if (n < 0)
 		return (0);
 	*out = n;
 	return (1);

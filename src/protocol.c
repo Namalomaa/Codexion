@@ -22,13 +22,21 @@ long	max(long a, long b)
 int	print_state(t_coders *coders, int id, char *msg)
 {
 	int	done;
+	int	count;
 
+	if (strcmp(msg, "is compiling") == 0)
+		count = get_compile_count(&coders->coders[id - 1]) ;
 	pthread_mutex_lock(&coders->simulation_lock);
 	done = 0;
 	if (!coders->stop)
 	{
-		printf("%ld %i %s\n",
+		printf("%ld %i %s",
 			get_current_time() - coders->start_time, id, msg);
+		if (strcmp(msg, "is compiling") == 0)
+		printf(" [%d/%d]",
+			count + 1,
+			coders->number_of_compiles_required);
+		printf("\n");
 		done = 1;
 	}
 	pthread_mutex_unlock(&coders->simulation_lock);
@@ -171,6 +179,8 @@ void	*coder_protocol(void *arg)
 		return (one_coder(coder));
 	while (!get_stop(coder->simulation))
 	{
+		if (coder->compile_count >= coder->simulation->number_of_compiles_required)
+			break ;
 		if (!request_resources(coder))
 			break ;
 
