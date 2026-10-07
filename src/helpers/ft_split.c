@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: namaloma <namaloma@learner.42.tech>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/09/14 19:25:34 by namaloma          #+#    #+#             */
-/*   Updated: 2026/09/14 19:25:35 by namaloma         ###   ########.fr       */
+/*                                                       :::      ::::::::    */
+/*   ft_split.c                                        :+:      :+:    :+:    */
+/*                                                   +:+ +:+         +:+      */
+/*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
+/*                                               +#+#+#+#+#+   +#+            */
+/*   Created: 2026/09/14 19:25:34 by namaloma         #+#    #+#              */
+/*   Updated: 2026/10/07 18:41:35 by namaloma        ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,12 @@ static void	free_split(char **split, int i)
 	free(split);
 }
 
-char	**ft_split(char const *s, char c)
+static int	fill_split(char **split, char const *s, char c)
 {
-	char	**split;
-	int		i;
-	int		j;
-	int		start;
+	int	i;
+	int	j;
+	int	start;
 
-	if (!s)
-		return (NULL);
-	split = malloc(sizeof(char *) * (strlen(s) + 1));
-	if (!split)
-		return (NULL);
 	i = 0;
 	j = 0;
 	while (s[i])
@@ -59,9 +53,26 @@ char	**ft_split(char const *s, char c)
 			i++;
 		split[j] = get_word(s, start, i);
 		if (!split[j])
-			return (free_split(split, j), NULL);
+		{
+			free_split(split, j);
+			return (0);
+		}
 		j++;
 	}
 	split[j] = NULL;
+	return (1);
+}
+
+char	**ft_split(char const *s, char c)
+{
+	char	**split;
+
+	if (!s)
+		return (NULL);
+	split = malloc(sizeof(char *) * (strlen(s) + 1));
+	if (!split)
+		return (NULL);
+	if (!fill_split(split, s, c))
+		return (NULL);
 	return (split);
 }

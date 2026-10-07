@@ -6,7 +6,7 @@
 /*   By: namaloma <namaloma@learner.42.tech>       #+#  +:+       +#+         */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/09/14 19:25:25 by namaloma         #+#    #+#              */
-/*   Updated: 2026/10/07 17:31:52 by namaloma        ###   ########.fr        */
+/*   Updated: 2026/10/07 18:43:44 by namaloma        ###   ########.fr        */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,6 @@ int	parse_positive_int(const char *s, long *out)
 		n = n * 10 + digit;
 		i++;
 	}
-	if (n < 0)
-		return (0);
 	*out = n;
 	return (1);
 }
