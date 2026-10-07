@@ -26,8 +26,8 @@ void	try_grant_req(t_coders *coders)
 		reserve_dongles(request->coder);
 		printf("GRANT coder=%d seq=%d deadline=%ld\n",
 			request->coder->id,
-		request->sequence,
-		request->deadline);
+			request->sequence,
+			request->deadline);
 		pop_heap(&coders->queue, coders);
 		pthread_cond_broadcast(&coders->scheduler_cond);
 	}
@@ -42,12 +42,12 @@ int	dongle_is_available(t_coder *coder)
 	left = coder->left_dongle;
 	right = coder->right_dongle;
 	now = get_current_time();
-	return (();
+	return (
 		left->reserved == 0
-	&& right->reserved == 0
-	&& now >= left->cold_at
-	&& now >= right->cold_at
-);
+		&& right->reserved == 0
+		&& now >= left->cold_at
+		&& now >= right->cold_at
+	);
 }
 
 void	reserve_dongles(t_coder *coder)

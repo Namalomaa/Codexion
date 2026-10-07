@@ -14,11 +14,14 @@
 
 int	init_request(t_request *request, t_coder *coder)
 {
+	t_coders	*coders;
+
+	coders = coder->simulation;
 	if (!request || !coder)
 		return (0);
-	request->deadline = get_last_compile_start(coder) + coder->simulation->time_to_burnout;
+	request->deadline = get_last_compile_start(coder) + coders->time_to_burnout;
 	request->coder = coder;
-	request->sequence = coder->simulation->next_sequence++;
+	request->sequence = coders->next_sequence++;
 	request->request_time = get_current_time();
 	return (1);
 }
@@ -28,7 +31,7 @@ int	init_dongles(t_coders *coders)
 	int	i;
 
 	coders->dongles = malloc(
-		sizeof(t_dongle)*coders->number_of_coders);
+			sizeof(t_dongle) * coders->number_of_coders);
 	if (!coders->dongles)
 		return (0);
 	i = -1;

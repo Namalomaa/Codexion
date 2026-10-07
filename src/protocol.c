@@ -34,7 +34,8 @@ void	debug(t_coder *coder)
 
 	start = get_current_time();
 	print_state(coder->simulation, coder->id, "is debugging");
-	while (!get_stop(coder->simulation) && get_current_time() - start < coder->simulation->time_to_debug)
+	while (!get_stop(coder->simulation)
+		&& get_current_time() - start < coder->simulation->time_to_debug)
 		usleep(1000);
 }
 
@@ -45,7 +46,7 @@ void	refactor(t_coder *coder)
 	start = get_current_time();
 	print_state(coder->simulation, coder->id, "is refactoring");
 	while (!get_stop(coder->simulation)
-			&& get_current_time() - start < coder->simulation->time_to_refactor)
+		&& get_current_time() - start < coder->simulation->time_to_refactor)
 	{
 		usleep(1000);
 	}
@@ -67,26 +68,27 @@ static void	*one_coder(t_coder *coder)
 
 void	*coder_protocol(void *arg)
 {
-	t_coder	*coder;
+	t_coder		*coder;
+	t_coders	*coders;
 
 	coder = arg;
-	if (coder->simulation->number_of_coders == 1)
+	coders = coder->simulation;
+	if (coders->number_of_coders == 1)
 		return (one_coder(coder));
-	while (!get_stop(coder->simulation))
+	while (!get_stop(coders))
 	{
-		if (coder->compile_count >= coder->simulation->number_of_compiles_required)
+		if (coder->compile_count >= coders->number_of_compiles_required)
 			break ;
 		if (!request_resources(coder))
 			break ;
-
-		print_state(coder->simulation, coder->id, "has taken a dongle");
-		print_state(coder->simulation, coder->id, "has taken a dongle");
+		print_state(coders, coder->id, "has taken a dongle");
+		print_state(coders, coder->id, "has taken a dongle");
 		compile(coder);
 		release_resources(coder);
-		if (get_stop(coder->simulation))
+		if (get_stop(coders))
 			break ;
 		debug(coder);
-		if (get_stop(coder->simulation))
+		if (get_stop(coders))
 			break ;
 		refactor(coder);
 	}
