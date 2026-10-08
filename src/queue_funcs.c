@@ -62,18 +62,14 @@ int	push_to_heap(t_queue *queue, t_coder *coder)
 
 void	pop_heap_at(t_queue *queue, int index, t_coders *coders)
 {
-
 	int	parent;
 
 	if (index < 0 || index >= queue->size)
 		return ;
-
 	queue->request[index] = queue->request[queue->size - 1];
 	queue->size--;
-
 	if (index >= queue->size)
 		return ;
-
 	parent = (index - 1) / 2;
 	if (index > 0
 		&& higher_priority(&queue->request[index],
