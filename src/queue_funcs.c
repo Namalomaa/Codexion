@@ -22,6 +22,27 @@ int	init_queue(t_queue *queue, t_coders *coders)
 	return (1);
 }
 
+int	find_best_available(t_queue *queue, t_coders *coders)
+{
+	int	i;
+	int	best;
+
+	i = 0;
+	best = -1;
+	while (i < queue->size)
+	{
+		if (dongle_is_available(queue->request[i].coder))
+		{
+			if (best == -1
+				|| higher_priority(&queue->request[i],
+					&queue->request[best], coders))
+				best = i;
+		}
+		i++;
+	}
+	return (best);
+}
+
 int	push_to_heap(t_queue *queue, t_coder *coder)
 {
 	t_coders	*coders;
@@ -39,12 +60,25 @@ int	push_to_heap(t_queue *queue, t_coder *coder)
 	return (1);
 }
 
-void	pop_heap(t_queue *queue, t_coders *coders)
+void	pop_heap_at(t_queue *queue, int index, t_coders *coders)
 {
-	if (queue->size == 0)
+
+	int	parent;
+
+	if (index < 0 || index >= queue->size)
 		return ;
-	queue->request[0] = queue->request[queue->size - 1];
+
+	queue->request[index] = queue->request[queue->size - 1];
 	queue->size--;
-	if (queue->size > 0)
-		heapify_down(queue, 0, coders);
+
+	if (index >= queue->size)
+		return ;
+
+	parent = (index - 1) / 2;
+	if (index > 0
+		&& higher_priority(&queue->request[index],
+			&queue->request[parent], coders))
+		heapify_up(queue, index, coders);
+	else
+		heapify_down(queue, index, coders);
 }

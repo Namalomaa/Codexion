@@ -132,13 +132,14 @@ int		dongle_is_available(t_coder *coder);
 // Priority Q
 int		init_queue(t_queue *queue, t_coders *coders);
 int		push_to_heap(t_queue *queue, t_coder *coder);
-void	pop_heap(t_queue *queue, t_coders *coders);
+void	pop_heap_at(t_queue *queue, int index, t_coders *coders);
 
 // Priority Q helpers
 void	swap_requests(t_request *a, t_request *b);
 int		higher_priority(t_request *a, t_request *b, t_coders *coders);
 void	heapify_up(t_queue *queue, int i, t_coders *coders);
 void	heapify_down(t_queue *queue, int current_idx, t_coders *coders);
+int		find_best_available(t_queue *queue, t_coders *coders);
 
 // utils
 void	fill_coders(t_coders *coders, long *numeric, char *scheduler);
