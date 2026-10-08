@@ -36,34 +36,40 @@ int	print_burnout(t_coders *coders, int id)
 	return (done);
 }
 
+static void	check_coder_states(t_coders *coders, int *all_compiled)
+{
+	int	i;
+
+	i = 0;
+	while (i < coders->number_of_coders)
+	{
+		if (get_compile_count(
+				&coders->coders[i]) >= coders->number_of_compiles_required)
+		{
+			(*all_compiled)++;
+			i++;
+			continue ;
+		}
+		if (get_current_time() - get_last_compile_start(
+				&coders->coders[i]) >= coders->time_to_burnout)
+		{
+			print_burnout(coders, coders->coders[i].id);
+			break ;
+		}
+		i++;
+	}
+}
+
 void	*coders_monitor(void *arg)
 {
 	t_coders	*coders;
-	int			i;
 	int			all_compiled;
 
 	coders = arg;
 	while (!get_stop(coders))
 	{
 		all_compiled = 0;
-		i = 0;
-		while (i < coders->number_of_coders)
-		{
-			if (get_compile_count(&coders->coders[i]) >= coders->number_of_compiles_required)
-			{
-				all_compiled++;
-				i++;
-				continue ;
-			}
-			if (get_current_time() - get_last_compile_start(&coders->coders[i]) >= coders->time_to_burnout)
-			{
-				print_burnout(coders, coders->coders[i].id);
-				break ;
-			}
-			if (get_compile_count(&coders->coders[i]) >= coders->number_of_compiles_required)
-				all_compiled++;
-			i++;
-		}
+		check_coder_states(coders, &all_compiled);
 		if (all_compiled == coders->number_of_coders)
 		{
 			set_stop(coders, 1);

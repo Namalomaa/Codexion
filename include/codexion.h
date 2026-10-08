@@ -97,6 +97,7 @@ int		parse_positive_int(const char *s, long *out);
 void	calc_timeout(long duration, struct timespec *timeout);
 int		len(char **s);
 long	max(long a, long b);
+void	init_cond_mux(t_coders *coders);
 
 // getters and setters
 long	get_current_time(void);
@@ -122,8 +123,6 @@ void	wait_for_dongles(t_coders *coders, t_coder *root);
 int		wait_for_resources(t_coders *coders, t_coder *coder);
 int		request_resources(t_coder *coder);
 
-
-
 // dongles control
 void	try_grant_req(t_coders *coders);
 void	reserve_dongles(t_coder *coder);
@@ -141,5 +140,8 @@ int		higher_priority(t_request *a, t_request *b, t_coders *coders);
 void	heapify_up(t_queue *queue, int i, t_coders *coders);
 void	heapify_down(t_queue *queue, int current_idx, t_coders *coders);
 
+// utils
+void	fill_coders(t_coders *coders, long *numeric, char *scheduler);
+int		copy_arg(char *all, char *arg, int idx);
 
 #endif

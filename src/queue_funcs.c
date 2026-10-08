@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "codexion.h"
+#include "codexion.h"
 
 int	init_queue(t_queue *queue, t_coders *coders)
 {
-	queue->request = malloc(sizeof(t_request)*coders->number_of_coders);
+	queue->request = malloc(sizeof(t_request) * coders->number_of_coders);
 	if (!queue->request)
 		return (0);
 	queue->size = 0;
@@ -43,7 +43,6 @@ void	pop_heap(t_queue *queue, t_coders *coders)
 {
 	if (queue->size == 0)
 		return ;
-	// replace the root of the heap with the last element
 	queue->request[0] = queue->request[queue->size - 1];
 	queue->size--;
 	if (queue->size > 0)

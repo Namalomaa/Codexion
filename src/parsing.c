@@ -31,7 +31,8 @@ static long	*validate_split(char **parts)
 	{
 		if (!parse_positive_int(parts[i], &n))
 		{
-			fprintf(stderr, "Error: '%s' is not a valid positive integer\n", parts[i]);
+			fprintf(stderr,
+				"Error: '%s' is not a valid positive integer\n", parts[i]);
 			return (free(nums), NULL);
 		}
 		nums[i] = n;
@@ -45,77 +46,62 @@ static char	*get_all_args_as_strings(int argc, char **argv)
 	char	*all;
 	int		total;
 	int		i;
-	int		j;
 	int		idx;
 
 	total = 0;
 	i = 1;
 	while (i < argc)
-	{
-		total += strlen(argv[i]) + 1;
-		i++;
-	}
-	all = malloc(sizeof(char) * (total + 1));
+		total += strlen(argv[i++]) + 1;
+	all = malloc(total + 1);
 	if (!all)
 		return (NULL);
-	idx = 0;
 	i = 1;
+	idx = 0;
 	while (i < argc)
 	{
-		j = 0;
-		while (argv[i][j])
-			all[idx++] = argv[i][j++];
-		if (i < argc - 1)
+		idx = copy_arg(all, argv[i], idx);
+		if (i++ < argc - 1)
 			all[idx++] = ' ';
-		i++;
 	}
 	all[idx] = '\0';
 	return (all);
-	//returns a string containing all args seperated by spaces.
+}
+
+static int	free_parse(char *all_str, char **parts, long *nums)
+{
+	if (nums)
+		free(nums);
+	if (parts)
+		split_free(parts);
+	if (all_str)
+		free(all_str);
+	return (0);
 }
 
 int	parse_and_validate(int argc, char **argv, t_coders *coders)
 {
 	char	*all_str;
-
-	// Holds all the arguments as a single string
-	char	**numeric_part;
-
-	// Holds the split parts of the arguments
-	long	*valid_nums;
-
-	// the first 7 args as int
-	char	*scheduler;
+	char	**parts;
+	long	*nums;
 
 	if (argc < 2)
 		return (fprintf(stderr, "Error: no arguments provided\n"), 0);
 	all_str = get_all_args_as_strings(argc, argv);
 	if (!all_str)
 		return (fprintf(stderr, "Error: malloc failed\n"), 0);
-	numeric_part = ft_split(all_str, ' ');
-	if (!numeric_part)
-	{
-		fprintf(stderr, "Error: malloc failed\n");
-		return (free(all_str), 0);
-	}
-	if (len(numeric_part) != 8)
-	{
-		fprintf(stderr, "Error: Invalid Number of arguments, Required 8\n");
-		return (free(all_str), split_free(numeric_part), 0);
-	}
-	scheduler = numeric_part[7];
-	if (strcmp(scheduler, "edf") != 0
-			&& strcmp(scheduler, "fifo") != 0)
-	{
-		fprintf(stderr, "Error: scheduler must be 'fifo' or 'edf'\n");
-		return (free(all_str), split_free(numeric_part), 0);
-	}
-	valid_nums = validate_split(numeric_part);
-	if (!valid_nums)
-		return (free(all_str), split_free(numeric_part), 0);
-	init_coders(valid_nums, scheduler, coders);
-	split_free(numeric_part);
-	free(all_str);
-	free(valid_nums);
+	parts = ft_split(all_str, ' ');
+	if (!parts)
+		return (free_parse(all_str, NULL, NULL));
+	if (len(parts) != 8)
+		return (fprintf(stderr, "Error: Invalid Number of arguments\n"),
+			free_parse(all_str, parts, NULL));
+	if (strcmp(parts[7], "edf") && strcmp(parts[7], "fifo"))
+		return (fprintf(stderr, "Error: invalid scheduler\n"),
+			free_parse(all_str, parts, NULL));
+	nums = validate_split(parts);
+	if (!nums)
+		return (free_parse(all_str, parts, NULL));
+	init_coders(nums, parts[7], coders);
+	free_parse(all_str, parts, nums);
 	return (1);
 }

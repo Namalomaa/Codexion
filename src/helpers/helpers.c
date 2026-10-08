@@ -88,3 +88,11 @@ int	parse_positive_int(const char *s, long *out)
 	*out = n;
 	return (1);
 }
+
+void	init_cond_mux(t_coders *coders)
+{
+	pthread_mutex_init(&coders->scheduler_lock, NULL);
+	pthread_cond_init(&coders->scheduler_cond, NULL);
+	pthread_cond_init(&coders->simulation_cond, NULL);
+	pthread_mutex_init(&coders->simulation_lock, NULL);
+}

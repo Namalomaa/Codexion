@@ -54,3 +54,25 @@ long	max(long a, long b)
 		return (a);
 	return (b);
 }
+
+void	fill_coders(t_coders *coders, long *numeric, char *scheduler)
+{
+	coders->time_to_burnout = numeric[1];
+	coders->time_to_compile = numeric[2];
+	coders->time_to_debug = numeric[3];
+	coders->time_to_refactor = numeric[4];
+	coders->number_of_compiles_required = numeric[5];
+	coders->dongle_cooldown = numeric[6];
+	coders->scheduler = ft_strdup(scheduler);
+	coders->next_sequence = 0;
+}
+
+int	copy_arg(char *all, char *arg, int idx)
+{
+	int	j;
+
+	j = 0;
+	while (arg[j])
+		all[idx++] = arg[j++];
+	return (idx);
+}
