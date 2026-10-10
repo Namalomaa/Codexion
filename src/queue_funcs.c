@@ -22,6 +22,20 @@ int	init_queue(t_queue *queue, t_coders *coders)
 	return (1);
 }
 
+int	init_request(t_request *request, t_coder *coder)
+{
+	t_coders	*coders;
+
+	coders = coder->simulation;
+	if (!request || !coder)
+		return (0);
+	request->deadline = get_last_compile_start(coder) + coders->time_to_burnout;
+	request->coder = coder;
+	request->sequence = coders->next_sequence++;
+	request->request_time = get_current_time();
+	return (1);
+}
+
 int	find_best_available(t_queue *queue, t_coders *coders)
 {
 	int	i;

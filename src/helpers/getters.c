@@ -41,11 +41,3 @@ int	get_compile_count(t_coder *coder)
 	pthread_mutex_unlock(&coder->simulation->simulation_lock);
 	return (value);
 }
-
-long	get_current_time(void)
-{
-	struct timespec	time;
-
-	clock_gettime(CLOCK_MONOTONIC, &time);
-	return (time.tv_sec * 1000 + time.tv_nsec / 1000000);
-}

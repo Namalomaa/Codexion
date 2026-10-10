@@ -15,27 +15,18 @@
 static long	*validate_split(char **parts)
 {
 	int		i;
-	long	n;
 	long	*nums;
 
 	if (!parts || !parts[0])
 		return (NULL);
 	nums = malloc(sizeof(long) * 7);
 	if (!nums)
-	{
-		fprintf(stderr, "Error: malloc failed\n");
-		return (NULL);
-	}
+		return (fprintf(stderr, "Error: malloc failed\n"), NULL);
 	i = 0;
 	while (i < 7)
 	{
-		if (!parse_positive_int(parts[i], &n))
-		{
-			fprintf(stderr,
-				"Error: '%s' is not a valid positive integer\n", parts[i]);
+		if (!validate_num(parts[i], i, &nums[i]))
 			return (free(nums), NULL);
-		}
-		nums[i] = n;
 		i++;
 	}
 	return (nums);
@@ -95,12 +86,12 @@ int	parse_and_validate(int argc, char **argv, t_coders *coders)
 	if (len(parts) != 8)
 		return (fprintf(stderr, "Error: Invalid Number of arguments\n"),
 			free_parse(all_str, parts, NULL));
-	if (strcmp(parts[7], "edf") && strcmp(parts[7], "fifo"))
-		return (fprintf(stderr, "Error: invalid scheduler\n"),
-			free_parse(all_str, parts, NULL));
 	nums = validate_split(parts);
 	if (!nums)
 		return (free_parse(all_str, parts, NULL));
+	if (strcmp(parts[7], "edf") && strcmp(parts[7], "fifo"))
+		return (fprintf(stderr, "Error: invalid scheduler\n"),
+			free_parse(all_str, parts, NULL));
 	init_coders(nums, parts[7], coders);
 	free_parse(all_str, parts, nums);
 	return (1);

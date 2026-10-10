@@ -20,6 +20,10 @@
 # include <time.h>
 # include <unistd.h>
 
+# define MAX_CODERS 300
+# define MAX_TIME 6000
+# define MAX_COMPILES 10000
+
 typedef struct s_coders	t_coders;
 
 typedef struct s_dongle
@@ -81,19 +85,24 @@ typedef struct s_coders
 }	t_coders;
 
 // initilizing
+void	create_threads(t_coders *coders);
 void	init_coders(long *numeric, char *scheduler, t_coders *coders);
 int		init_dongles(t_coders *coders);
 int		init_request(t_request *request, t_coder *coder);
 
 // parsing
 int		parse_and_validate(int argc, char **argv, t_coders *coders);
+void	print_range_error(int i);
+int		validate_num(char *part, int i, long *n);
+char	*arg_name(int i);
+int		ok_range(int idx, long n);
 
 // helpers
 char	**ft_split(char const *s, char c);
 void	split_free(char **s);
 long	ft_atol(const char *str);
 char	*ft_strdup(const char *s);
-int		parse_positive_int(const char *s, long *out);
+int		parse_non_neg_int(const char *s, long *out);
 void	calc_timeout(long duration, struct timespec *timeout);
 int		len(char **s);
 long	max(long a, long b);

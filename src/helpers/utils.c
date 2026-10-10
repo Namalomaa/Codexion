@@ -12,6 +12,55 @@
 
 #include "codexion.h"
 
+int	len(char **s)
+{
+	int	count;
+
+	count = 0;
+	while (s[count])
+		count++;
+	return (count);
+}
+
+void	split_free(char **s)
+{
+	int	i;
+
+	if (!s)
+		return ;
+	i = 0;
+	while (s[i])
+	{
+		free(s[i]);
+		i++;
+	}
+	free(s);
+}
+
+char	*ft_strdup(const char *s)
+{
+	char	*ds;
+	size_t	i;
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+	{
+		len++;
+	}
+	ds = (char *) malloc(sizeof(char) * (len + 1));
+	if (!ds)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		ds[i] = s[i];
+		i++;
+	}
+	ds[i] = '\0';
+	return (ds);
+}
+
 int	print_state(t_coders *coders, int id, char *msg)
 {
 	int	done;
@@ -34,37 +83,6 @@ int	print_state(t_coders *coders, int id, char *msg)
 	}
 	pthread_mutex_unlock(&coders->simulation_lock);
 	return (done);
-}
-
-void	calc_timeout(long duration, struct timespec *timeout)
-{
-	clock_gettime(CLOCK_REALTIME, timeout);
-	timeout->tv_sec += duration / 1000;
-	timeout->tv_nsec += (duration % 1000) * 1000000;
-	if (timeout->tv_nsec >= 1000000000)
-	{
-		timeout->tv_sec += 1;
-		timeout->tv_nsec -= 1000000000;
-	}
-}
-
-long	max(long a, long b)
-{
-	if (a > b)
-		return (a);
-	return (b);
-}
-
-void	fill_coders(t_coders *coders, long *numeric, char *scheduler)
-{
-	coders->time_to_burnout = numeric[1];
-	coders->time_to_compile = numeric[2];
-	coders->time_to_debug = numeric[3];
-	coders->time_to_refactor = numeric[4];
-	coders->number_of_compiles_required = numeric[5];
-	coders->dongle_cooldown = numeric[6];
-	coders->scheduler = ft_strdup(scheduler);
-	coders->next_sequence = 0;
 }
 
 int	copy_arg(char *all, char *arg, int idx)
